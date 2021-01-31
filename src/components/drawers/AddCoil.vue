@@ -1,0 +1,203 @@
+<template>
+  <v-navigation-drawer
+    v-if="$store.state.coilDrawer"
+    v-model="$store.state.coilDrawer"
+    temporary
+    right
+    width="390"  
+    style="position:fixed; top:0; right:0; overflow-y:scroll; z-index:101"
+  >
+    <div class="subtitle-1 font-weight-bold px-4 py-2">Add Coil
+      <!-- <span>{{ $store.state.news.$store.state.coilDrawerStatus === 'edit' ? 'Edit News' : 'Add News'}}</span> -->
+      <v-icon
+        class="float-right"
+        @click="close"
+      >
+        mdi-close-circle
+      </v-icon>
+    </div>
+    <v-divider />
+          <v-container>
+            <v-row class="px-4 mt-4">
+                <v-col cols="12" class="py-0">
+                    <v-autocomplete
+                    v-model="data.company"
+                    :items="$store.state.companies"
+                    item-text="name"
+                    item-value="name"
+                    label="Company"
+                    outlined
+                    color="grey"
+                    dense
+                    />
+                </v-col>
+                <v-col cols="6" class="py-0">
+                    <v-menu
+                        ref="menu"
+                        v-model="dateMenu"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        min-width="290px"
+                    >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                                dense
+                                outlined
+                                color="grey"
+                                v-model="selDate"
+                                placeholder="Select Date"
+                                readonly
+                                v-bind="attrs"
+                                v-on="on"
+                                clearable
+                                @click:clear="clearSearch('date')"
+                                class="body-2"
+                            ></v-text-field>
+                        </template>
+                        <v-date-picker
+                            v-model="selDate"
+                            no-title
+                            scrollable
+                            @input="dateMenu = false"
+                            @change="searchData"
+                            :max="maxDate"
+                            >
+                        </v-date-picker>
+                    </v-menu>
+                </v-col>
+                <v-col class="py-0 my-0" cols="6">
+                  <v-combobox
+                    v-model="time"
+                    :items="times"
+                    outlined
+                    dense
+                    color="grey"
+                    label="Select Time"
+                  />
+                </v-col>
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  v-model="data.brand_no"
+                  outlined
+                  label="Brand Number"
+                  color="grey"
+                  dense
+                />
+              </v-col>
+              
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  v-model.number="data.thickness"
+                  label="Thickness (mm)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                />
+              </v-col>
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  v-model.number="data.weight"
+                  label="Weight (kg)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                />
+              </v-col>
+              <v-col cols="12" class="py-0">
+                <v-text-field
+                  v-model.number="data.width"
+                  label="Width (mm)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                />
+              </v-col>
+            </v-row>
+          </v-container>
+    <v-divider />
+    <div class="mx-4 mt-8 float-right">
+      <v-btn
+        class="mr-2"
+        outlined
+        @click= "close"
+      >
+        Cancel
+      </v-btn>
+      <v-btn
+        @click= "addCoil"
+        :dark="validateForm"
+        :disabled="!validateForm"
+      >
+        Save
+      </v-btn>
+    </div>
+  </v-navigation-drawer>
+</template>
+
+<script>
+import list from '@/services/list';
+  export default {
+      name: 'AddCoil',
+    data () {
+      return {
+        drawer: null,
+        data: {},
+        maxDate: new Date().toISOString(),
+        dateMenu: false,
+        selDate: null,
+        time: null,
+        times: []
+      }
+    },
+    computed: {
+      validateForm() {
+          if(this.data.company && this.selDate && this.time && this.data.brand_no && this.data.thickness && this.data.width && this.data.weight)
+            return true
+            else return false
+      }
+
+    },
+    mounted() {
+        this.getTime();
+    },
+    methods: {
+        getTime() {
+            var quarterHours = ["00", "15", "30", "45"];
+            for(var i = 0; i < 24; i++) {
+                for(var j = 0; j < 4; j++) {
+                    this.times.push( ('0' + i).slice(-2) + ":" + quarterHours[j] );
+                }
+            }
+        },
+        clearSearch(data) {
+            console.log("data",data)
+        },
+        searchData() {
+
+        },
+        async addCoil(){
+            this.data.date = `${this.selDate} ${this.time}`
+            this.data.created_at = this.$options.filters.calendarDate(new Date().toISOString())
+            try {
+                const result = await list.add(this.data)
+                // this.rows = result.data.rows;
+                console.log("result", result);
+            } 
+            catch (error) {
+                console.log("error",error)
+            }
+            finally {
+                this.$store.state.coilDrawer = false
+                this.$store.dispatch('getCoils', {page:1, limit:10});
+            }
+        },
+        close() {
+        this.$store.state.coilDrawer = false
+      }
+    }
+  }
+</script>
