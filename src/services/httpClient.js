@@ -2,7 +2,7 @@ import axios from 'axios'
 import $router from "@/router"
 
 const httpClient = axios.create({
-    baseURL: "http://localhost:5050/",
+    baseURL: "http://localhost:5000/",
     timeout: 500000,
     withCredentials: false,
     headers: {

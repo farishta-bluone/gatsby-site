@@ -15,8 +15,8 @@ export default new Router ({
       },
 
     routes: [
-        { path: '/', redirect: { name: 'list' }},
-        // { path: '/dashboard', redirect: { name: 'news' }},
+        { path: '/', redirect: { name: 'coils' }},
+
         {
             path: "/login",
             name: "login",
@@ -24,9 +24,14 @@ export default new Router ({
             component: () => import("@/pages/Login.vue")
         },
         {
-            path: "/list",
-            name: "list",
-            component: () => import("@/pages/HomePage.vue")
-        }
+            path: "/coils",
+            name: "coils",
+            component: () => import("@/pages/CoilsList.vue")
+        },
+        {
+          path: "/slitted_coils",
+          name: "slitted_coils",
+          component: () => import("@/pages/SlittedCoils.vue")
+      }
     ]
 })
