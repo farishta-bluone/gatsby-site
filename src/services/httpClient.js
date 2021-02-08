@@ -2,7 +2,7 @@ import axios from 'axios'
 import $router from "@/router"
 
 const httpClient = axios.create({
-    baseURL: "http://b3e3615e9e70.ngrok.io/",
+    baseURL: "https://api-admin.vanser.org/",
     timeout: 500000,
     withCredentials: false,
     headers: {
