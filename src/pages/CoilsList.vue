@@ -83,7 +83,7 @@
             </v-col>
             <v-col cols="auto" class="text-right">
                 <!-- <v-btn dark color="#9932CC" class="mr-3 body-2 font-weight-bold" @click="slittedCoils">Slitted Coils</v-btn> -->
-                <v-btn dark color="#9932CC" class="mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
+                <v-btn dark  class="cyan darken-1 mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
             </v-col>
         </v-row>
         <v-data-table
