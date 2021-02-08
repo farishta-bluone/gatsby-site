@@ -52,7 +52,7 @@
                                 v-on="on"
                                 clearable
                                 @click:clear="clearSearch('date')"
-                                class="body-2"
+                                class="body-1"
                             ></v-text-field>
                         </template>
                         <v-date-picker
@@ -183,6 +183,7 @@ import coil from '@/services/coil';
     },
     mounted() {
         if(this.$store.state.coilId) {
+          console.log("checkkk", this.$store.state.coilData)
           let coilData = this.$store.state.coilData
           let date = this.$options.filters.calendarDate(coilData.date).split(" ");
           const {brand_no, company, thickness, width, weight, formulated_weight, od} = coilData;

@@ -2,7 +2,7 @@ import axios from 'axios'
 import $router from "@/router"
 
 const httpClient = axios.create({
-    baseURL: "http://localhost:5000/",
+    baseURL: "http://b3e3615e9e70.ngrok.io/",
     timeout: 500000,
     withCredentials: false,
     headers: {

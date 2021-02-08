@@ -28,7 +28,7 @@
                                     v-on="on"
                                     clearable
                                     @click:clear="clearSearch('date')"
-                                    class="body-2"
+                                    class="body-1"
                                 ></v-text-field>
                             </template>
                             <v-date-picker
@@ -110,7 +110,7 @@
             </template>
             <template v-slot:[`item.status`]="{item}">
                 <div class="body-2"> 
-                    <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status}}</span>
+                    <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                 </div>
             </template>
             <!-- <template v-slot:[`item.actions`]="{item}">
@@ -182,7 +182,7 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'Avilable' },{id:2, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'Avilable' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'Coil No',
@@ -196,6 +196,7 @@
                 { text: 'OD (mm)', value: 'od' },
                 { text: 'Thickness (mm)', value: 'thickness' },
                 { text: 'Weight (kg)', value: 'weight' },
+                // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
                 { text: 'Width (mm)', value: 'width' },
                 { text: 'Actions', value: 'actions', sortable: false, }],
        
@@ -247,6 +248,7 @@
                     this.$store.state.coilData = {}
                 }
                 if(text === "create slit") {
+                    this.$store.state.coilId = item.id
                     this.$store.state.selRows = [item]
                     this.$router.push({path: "/slitted_coils"});
                     console.log("this.$store.state.selRows", this.$store.state.selRows)
@@ -284,7 +286,7 @@
               color = 'red--text text--lighten-1'
               break 
             default :
-              color = 'grey--text text--darken-3'
+              color = 'yellow--text text--darken-3'
               break
           }
           return color
@@ -342,6 +344,9 @@
 .v-data-table.coils>.v-data-table__wrapper>table>thead>tr>th {
   font-size: 16px !important;
   color: black !important;
+}
+.v-data-table.coils>.v-data-table__wrapper>table>tbody>tr>td {
+  /* padding: 10px 10px ; */
 }
 .customize-list .v-list-item {
   min-height: 33px !important;

@@ -42,26 +42,7 @@
                             </v-date-picker>
                         </v-menu>
                     </v-col>
-                    <!-- <v-col
-                        class="d-flex"
-                        cols="auto"
-                    >
-                        <v-select
-                        outlined
-                        dense
-                        v-model="selStatus"
-                        :items="statusList"
-                        label="Select Coil Status"
-                        item-text="name"
-                        item-value="name"
-                        color="grey"
-                        @input="setOptions"
-                        clearable
-                        @click:clear="clearSearch('status')"
-                        ></v-select>
-                    </v-col> -->
-
-                                        <v-col
+                    <v-col
                         class="d-flex"
                         cols="auto"
                     >

@@ -7,7 +7,7 @@
     width="390"  
     style="position:fixed; top:0; right:0; overflow-y:scroll; z-index:101"
   >
-    <div class="subtitle-1 font-weight-bold px-4 py-2">Slits Preview
+    <div class="body-1 font-weight-bold px-4 py-2">Slits Preview
       <!-- <span>{{ $store.state.news.$store.state.coilDrawerStatus === 'edit' ? 'Edit News' : 'Add News'}}</span> -->
       <v-icon
         class="float-right"
@@ -18,22 +18,14 @@
     </div>
     <!-- <p></p> -->
     <v-divider />
-          <v-container>
-            <v-row class="px-4 mt-4" v-for="item in rows" :key="item.id">
-              <v-col cols="12" class="py-0">
-                <v-text-field
-                  :value="item.od"
-                  label="Slitted OD (mm)"
-                  outlined
-                  dense
-                  color="grey"
-                  type="number"
-                  readonly
-                />
+          <v-container v-if="rows.length > 0">
+            <v-row class="px-4">
+              <v-col cols="12">
+                <p class="body-1 font-weight-bold mb-1">Parent Coil:  {{rows[0].brand_no}}</p>
               </v-col>
-              <v-col cols="12" class="py-0">
+                <v-col cols="6" class="py-0">
                 <v-text-field
-                  :value="item.slitted_weight"
+                  :value="rows[0].weight"
                   label="Weight (kg)"
                   outlined
                   dense
@@ -42,21 +34,61 @@
                   readonly
                 />
               </v-col>
-              <v-col cols="12" class="py-0">
+              <v-col cols="6" class="py-0">
                 <v-text-field
-                    :value="item.slitted_width"
+                  :value="rows[0].width"
                   label="Width (mm)"
                   outlined
                   dense
                   color="grey"
                   type="number"
+                  readonly
                 />
               </v-col>
-              <v-col cols="12"><v-divider></v-divider></v-col>
+              
+            </v-row>
+          </v-container>
+          <v-divider />
+          
+          <v-container>
+            <div class="pb-5">
+              <p class="body-1 font-weight-bold mx-3 mb-1">Slits
+              <span class="float-right">
+                <!-- <v-icon @click="editFlag = true" small>mdi-pencil</v-icon>  -->
+                <!-- <v-btn small outlined> Edit</v-btn> -->
+              </span></p>
+              <!-- <p class="caption mx-3">You can edit fields now!</p> -->
+            </div>
+            
+            <v-row class="px-4" v-for="(item) in rows" :key="item.id">
+              <!-- <v-col cols="auto">{{index +1 }}</v-col> -->
+              <v-col cols="6" class="py-0">
+                <v-text-field
+                  :value="item.slitted_weight"
+                  label="Weight (kg)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                  :readonly="!editFlag"
+                />
+              </v-col>
+              <v-col cols="6" class="py-0">
+                <v-text-field
+                  :value="item.slitted_width"
+                  label="Width (mm)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                  :readonly="!editFlag"
+                />
+              </v-col>
+              <!-- <v-col cols="12"><v-divider></v-divider></v-col> -->
             </v-row>
           </v-container>
     <v-divider />
-    <div class="mx-4 mt-8 float-right">
+    <!-- <div class="mx-4 mt-8 float-right">
       <v-btn
         class="mr-2"
         outlined
@@ -64,14 +96,14 @@
       >
         Cancel
       </v-btn>
-      <!-- <v-btn
+      <v-btn
        
         :dark="validateForm"
         :disabled="!validateForm"
       >
         Save
-      </v-btn> -->
-    </div>
+      </v-btn>
+    </div> -->
   </v-navigation-drawer>
 </template>
 
@@ -88,7 +120,8 @@ import coil from '@/services/coil';
         selDate: null,
         time: null,
         times: [],
-        rows: []
+        rows: [],
+        editFlag: false
       }
     },
     computed: {
