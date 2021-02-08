@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar
-      color="#01579B"
+      color="#455A64"
       dark
       fixed
     >

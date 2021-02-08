@@ -1,9 +1,12 @@
 <template>
     <v-container fluid>
-        <h2 class="my-3 font-weight-bold">Coils</h2>
-        <v-row justify="space-between"> 
+        
+        <v-row justify="space-between" class="my-3"> 
             <v-col cols="auto">
-                <v-row>
+                <h2 class=" font-weight-bold">HR Coils</h2>
+            </v-col>
+            <v-col cols="auto">
+                <v-row justify="end">
                     <v-col cols="auto" v-if="selMultiRows.length > 0">
                         <v-btn dark class="pt-4 pb-4" color="grey" @click="openSlitForm">Create Slits</v-btn>
                     </v-col>
@@ -79,12 +82,13 @@
                         @click:clear="clearSearch('company')"
                         ></v-select>
                     </v-col>
+                    <v-col cols="auto" class="text-right">
+                <!-- <v-btn dark color="#9932CC" class="mr-3 body-2 font-weight-bold" @click="slittedCoils">Slitted Coils</v-btn> -->
+                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
+            </v-col>
                 </v-row>
             </v-col>
-            <v-col cols="auto" class="text-right">
-                <!-- <v-btn dark color="#9932CC" class="mr-3 body-2 font-weight-bold" @click="slittedCoils">Slitted Coils</v-btn> -->
-                <v-btn dark  class="cyan darken-1 mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
-            </v-col>
+            
         </v-row>
         <v-data-table
             v-model="selMultiRows"
