@@ -213,7 +213,7 @@
                 }
                 if(text === "create slit") {
                     this.$store.state.selRows = [item]
-                    this.$router.push({path: "/slitted_coils"});
+                    this.$router.push({path: "/slit_planning"});
                     console.log("this.$store.state.selRows", this.$store.state.selRows)
                 }
                     
@@ -222,7 +222,7 @@
             },
             openSlitForm() {
                 this.$store.state.selRows = this.selMultiRows;
-                this.$router.push({path:'/slitted_coils'})
+                this.$router.push({path:'/slit_planning'})
             },
             setOptions() {
                 console.log("Calleddddddd")

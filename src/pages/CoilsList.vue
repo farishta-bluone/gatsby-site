@@ -8,7 +8,7 @@
             <v-col cols="auto">
                 <v-row justify="end">
                     <v-col cols="auto" v-if="selMultiRows.length > 0">
-                        <v-btn dark class="pt-4 pb-4" color="grey" @click="openSlitForm">Create Slits</v-btn>
+                        <v-btn :dark="!preventSlitting" :disabled="preventSlitting" class="pt-4 pb-4 font-weight-bold" @click="openSlitForm">Create Slits</v-btn>
                     </v-col>
                     <v-col cols="auto">
                         <v-menu
@@ -88,6 +88,7 @@
             </v-col>
                 </v-row>
             </v-col>
+            <v-col class="red--text caption py-0" color="red" cols="12" v-if="preventSlitting">You can create slits for available coils only.</v-col>
             
         </v-row>
         <v-data-table
@@ -117,12 +118,6 @@
                     <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                 </div>
             </template>
-            <!-- <template v-slot:[`item.actions`]="{item}">
-                <div class="body-2"> 
-                    <v-btn @click="openSlitForm" outlined small class="" >{{item.status === 'avilable' ? 'Create Slit': 'Preview Planning'}}</v-btn>
-                </div>
-            </template> -->
-
             <template v-slot:[`item.actions`]="{item}">
           <v-menu>
             <template v-slot:activator="{ on, attrs }">
@@ -186,7 +181,7 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'Avilable' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'Available' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'Coil No',
@@ -225,20 +220,23 @@
             },
         },
         computed: {
+            preventSlitting() {
+                
+                let index = this.selMultiRows.findIndex(item => item.status.toLowerCase() != "available") 
+                if(index >=0) return true 
+                else return false
+            },
             coilRows() {
                 return this.$store.state.coils.filter(item => {
                 let actions = []
-                if(item.status === 'avilable') 
+                if(item.status === 'available') 
                     actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}]
-                else actions = [{icon:'mdi-view-grid', text: 'preview planning'}]
+                else actions = [{icon:'mdi-view-grid', text: 'preview planning'}, {icon:'mdi-pencil', text: 'edit planning'},]
                 return item.actions = actions
                 })
             }
         },
         methods: {
-            slittedCoils() {
-                this.$router.push({path: '/slitted_coils'})
-            },
             actions(text, item) {
                 if(text === "delete") 
                     this.deleteCoil(item.id);
@@ -254,21 +252,21 @@
                 if(text === "create slit") {
                     this.$store.state.coilId = item.id
                     this.$store.state.selRows = [item]
-                    this.$router.push({path: "/slitted_coils"});
-                    console.log("this.$store.state.selRows", this.$store.state.selRows)
+                    this.$router.push({path: "/slit_planning"});
                 }
                 if(text === "preview planning") {
                     this.$store.state.coilId = item.id
                     this.$store.state.slitDrawer = true
                     console.log("preview")
                 }
-                    
-                    // this.editCoil(item);
-                console.log(text, item)
+                if(text === "edit planning") {
+                    this.$store.state.coilId = item.id
+                    this.$router.push({path: `/slit_planning/${item.id}`});
+                }
             },
             openSlitForm() {
                 this.$store.state.selRows = this.selMultiRows;
-                this.$router.push({path:'/slitted_coils'})
+                this.$router.push({path:'/slit_planning'})
             },
             setOptions() {
                 console.log("Calleddddddd")
@@ -283,14 +281,14 @@
             case 'slitted': 
               color = 'grey--text text--darken-1'
               break
-            case 'avilable': 
+            case 'available': 
               color = 'green--text text--darken-2'
               break
             case 'edit-required': 
               color = 'red--text text--lighten-1'
               break 
             default :
-              color = 'yellow--text text--darken-3'
+              color = 'yellow--text text--darken-4'
               break
           }
           return color

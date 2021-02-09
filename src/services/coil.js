@@ -22,6 +22,9 @@ export default {
     addSlits(id, params) {
         return httpClient.post(`${END_POINT}/${id}/slits`,params)
     },
+    updateSlits(id, params) {
+        return httpClient.put(`${END_POINT}/${id}/slits`, params)
+    },
     // prevNext(ids,data) {
     //     let newIds = ids.join()
     //     return httpClient.get(`${END_POINT}/${newIds}/prev-next`,{params:data })

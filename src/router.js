@@ -29,8 +29,13 @@ export default new Router ({
             component: () => import("@/pages/CoilsList.vue")
         },
         {
-          path: "/slitted_coils",
-          name: "slitted_coils",
+          path: "/slit_planning",
+          name: "slit_planning",
+          component: () => import("@/pages/SlittedCoils.vue")
+        },
+        {
+          path: "/slit_planning/:id",
+          name: "edit_slit_planning",
           component: () => import("@/pages/SlittedCoils.vue")
       }
     ]

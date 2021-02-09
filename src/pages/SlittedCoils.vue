@@ -4,7 +4,7 @@
         <v-row justify="space-around" class=" mx-1">
             <!-- <v-col class="py-0" cols="12"><v-btn class="caption" text>Back</v-btn></v-col> -->
             <v-col>
-                <h2>Slit Selection</h2>
+                <h2>Slit Planning</h2>
             </v-col>
              <!-- <v-col cols="auto">
                 <v-menu
@@ -62,11 +62,14 @@
             }
         },
         mounted() {
+            if(this.$route.params.id) {
+                this.$store.state.selRows = []
+                this.$store.state.coilId = this.$route.params.id
+                this.$store.dispatch('getSlits', {id: parseInt(this.$route.params.id)})
+            }
             if(!this.$store.state.coilId && this.$store.state.selRows.length === 0 ) {
                 this.$router.push({path: '/coils'})
             }
-                
-            // console.log("Check this", this.$store.state.selRows)
         },
         methods: {
             goBack() {
