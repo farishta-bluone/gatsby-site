@@ -20,7 +20,7 @@
           <v-container>
             <v-row class="px-4 mt-4">
                 <v-col cols="12" class="py-0">
-                    <v-autocomplete
+                    <v-combobox
                     v-model="data.company"
                     :items="$store.state.companies"
                     item-text="name"
@@ -29,6 +29,8 @@
                     outlined
                     color="grey"
                     dense
+                    :return-object="false"
+                    @change="changeCompany"
                     />
                 </v-col>
                 <v-col cols="6" class="py-0">
@@ -160,6 +162,7 @@
 
 <script>
 import coil from '@/services/coil';
+import companies from '@/services/companies';
   export default {
       name: 'AddCoil',
     data () {
@@ -194,6 +197,12 @@ import coil from '@/services/coil';
         this.getTime();
     },
     methods: {
+      changeCompany(name) {
+        let index = this.$store.state.companies.findIndex(item => item.name == name)
+        if(index < 0) {
+          this.addCompany(name)
+        }
+      },
         getTime() {
             var quarterHours = ["00", "15", "30", "45"];
             for(var i = 0; i < 24; i++) {
@@ -207,6 +216,18 @@ import coil from '@/services/coil';
         },
         searchData() {
 
+        },
+        async addCompany(company){
+            try {
+              const result = await companies.add({name: company})
+              console.log("result", result);
+            } 
+            catch (error) {
+              console.log("error",error)
+            }
+            finally {
+              this.$store.dispatch('getCompanies')
+            }
         },
         async addCoil(){
           if(this.$store.state.coilId) this.editCoil();

@@ -26,7 +26,7 @@
                             <p class="mb-2">OD: {{coilData.od}} mm</p>
                             <p class="mb-2">Width: {{coilData.width}} mm</p>
                             <p class="mb-2">Thickness: {{coilData.thickness}} mm</p>
-                            <p class="font-weight-bold green--text text--darken-4" color="1B5E20">Avilable width: {{avilableWidth}} mm</p>
+                            <p class="font-weight-bold green--text text--darken-4" color="1B5E20">Available width: {{avilableWidth}} mm</p>
                         </v-col>
                         <v-col cols="8">
                             <v-row>
@@ -47,7 +47,16 @@
                                                     <v-row>
                                                         <v-col cols="auto" class="py-0">
                                                             <v-text-field
-                                                            
+                                                            v-model.number="item.slitted_width"
+                                                            label="Slitted Width (mm)"
+                                                            outlined
+                                                            dense
+                                                            color="grey"
+                                                            type="number"
+                                                            />
+                                                        </v-col>
+                                                        <v-col cols="auto" class="py-0">
+                                                            <v-text-field
                                                             label="Slitted Weight (kg)"
                                                             outlined
                                                             dense
@@ -55,16 +64,6 @@
                                                             type="number"
                                                             readonly
                                                             :value="formulatedWt(item.slitted_width)"
-                                                            />
-                                                        </v-col>
-                                                        <v-col cols="auto" class="py-0">
-                                                            <v-text-field
-                                                            v-model.number="item.slitted_width"
-                                                            label="Slitted Width (mm)"
-                                                            outlined
-                                                            dense
-                                                            color="grey"
-                                                            type="number"
                                                             />
                                                         </v-col>
                                                         <v-col cols="auto" class="py-1">
@@ -78,7 +77,7 @@
                                                     </v-row>
                                                 </v-col>  
                                             </v-row>
-                                            <div class="red--text caption">{{validateForm ? "" :"Slitted width total can't excceed the total coil width"}}</div>
+                                            <div class="red--text caption">{{validateForm ? "" :"Total Slitted width cannot exceed the total Coil width"}}</div>
                                         </v-col>
                                     </v-row>
                                 </v-col>

@@ -64,7 +64,7 @@
                         ></v-select>
                     </v-col>
 
-                                        <v-col
+                    <v-col
                         class="d-flex"
                         cols="auto"
                     >
@@ -184,12 +184,12 @@
                 statusList: [{id:1, name: 'Available' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
                 headers: [
                 {
-                    text: 'Coil No',
+                    text: 'ID',
                     align: 'start',
                     value: 'id',
                 },
                 { text: 'Company', value: 'company', sortable: false, },
-                { text: 'Brand No', value: 'brand_no', sortable: false, },
+                { text: 'Parent ID', value: 'brand_no', sortable: false, },
                 { text: 'Date of Receiving', value: 'date' },
                 { text: 'Status', value: 'status', sortable: false, },
                 { text: 'OD (mm)', value: 'od' },
@@ -202,7 +202,7 @@
             }
         },
         mounted() {
-            // this.$store.dispatch('getCoils', {});
+            this.$store.dispatch('getCompanies');
             // this.getCoils();
         },
         watch: {

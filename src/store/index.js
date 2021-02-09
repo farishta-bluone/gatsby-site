@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import moment from "moment"
 
 import coil from '@/services/coil';
+import companies from '@/services/companies';
 import slittedCoil from '@/services/slittedCoil';
 
 Vue.use(Vuex)
@@ -22,7 +23,7 @@ export default new Vuex.Store({
     btnColor: '#9932CC', 
     coilDrawer: false,
     slitDrawer: false,
-    companies: [{id:1, name: 'SAIL' },{id:2, name: 'Tata Steel Ltd' },{id:3, name: 'Jindal Steel Ltd'}],
+    companies: [],
   },
   mutations: {
       
@@ -38,6 +39,13 @@ export default new Vuex.Store({
           })
           .catch((error) => console.log("error",error))
           .finally(() => state.isLoading = false)
+    },
+    getCompanies({state}) {
+      return companies.get()
+          .then((res) => {
+            state.companies = res.data.rows
+          })
+          .catch((error) => console.log("error",error))
     },
     getSlits({state}, payload) {
       return coil.getSlits(payload.id)
