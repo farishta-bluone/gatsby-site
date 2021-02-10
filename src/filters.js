@@ -5,7 +5,7 @@ Vue.prototype.moment = moment
 
 Vue.filter("formatDate", str => {
     if (str != null) {
-		return moment(str).format('MMM Do YYYY, hh:mm A');
+		return moment(str).format('ll');
 	}
 	return "";
 })

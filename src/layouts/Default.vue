@@ -3,8 +3,8 @@
         <div style="min-height: 56px">
             <Header />
             </div>
-        <!-- <Menu /> -->
-        <div class="mx-8" >
+        <Menu />
+        <div class="mx-7 pl-12" >
             <slot  />
             </div>
     </div>
@@ -12,12 +12,12 @@
 
 <script>
 import Header from "@/components/Header"
-// import Menu from "@/components/drawers/Menu"
+import Menu from "@/components/drawers/LeftMenu"
 
 export default {
     components: {
        Header,
-    //    Menu
+       Menu
     },
     data() {
         return {

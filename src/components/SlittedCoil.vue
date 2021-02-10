@@ -23,7 +23,7 @@
                             <p class="mb-2">Company: {{coilData.company}}</p>
                             <p class="mb-2">Weight: {{coilData.weight}} kg</p>
                             <p class="mb-2">Formulated Weight: {{coilData.formulated_weight}} kg</p>
-                            <p class="mb-2">OD: {{coilData.od}} mm</p>
+                            <!-- <p class="mb-2">OD: {{coilData.od}} mm</p> -->
                             <p class="mb-2">Width: {{coilData.width}} mm</p>
                             <p class="mb-2">Thickness: {{coilData.thickness}} mm</p>
                             <p class="font-weight-bold green--text text--darken-4" color="1B5E20">Available width: {{avilableWidth}} mm</p>
@@ -121,14 +121,17 @@
                                         </v-menu>
                                         </v-col>
                                         <v-col class="py-0 my-0" cols="12">
-                                        <v-combobox
-                                            v-model="time"
-                                            :items="times"
+                                        <v-select
                                             outlined
                                             dense
+                                            v-model.number="shift"
+                                            :items="$store.state.shifts"
+                                            label="Select Shift"
+                                            item-text="name"
+                                            item-value="id"
                                             color="grey"
-                                            label="Select Time"
-                                        />
+                                            
+                                            ></v-select>
                                     </v-col>
                                 </v-row>
                                 </v-col>
@@ -142,9 +145,10 @@
 </template>
 
 <script>
-import coil from "@/services/coil";
+import coils from "@/services/coils";
   export default {
     data: () => ({
+        shift: '',
         rule:true,
         data:{},
         saved: false,
@@ -154,15 +158,13 @@ import coil from "@/services/coil";
         maxDate: new Date().toISOString(),
         slittedItems: [],
         errorMsg: '',
-        time: null,
-        times: [],
         deletedItems: [],
     }),
     props: {coilData: Object},
     computed: {
         haltSave(){
             let flag = false;
-            if(this.selDate && this.time && this.slittedItems.length > 0) {
+            if(this.selDate && this.shift && this.slittedItems.length > 0) {
                 for(let i=0 ; i<this.slittedItems.length ; i++) {
                     if(!this.slittedItems[i].slitted_width) {
                         flag = true
@@ -198,11 +200,11 @@ import coil from "@/services/coil";
         }
     },
     mounted() {
-        this.getTime();
+        this.$store.dispatch('getShifts')
         if(this.$route.params.id) {
             this.slittedItems = this.$store.state.slits
             this.selDate = this.$store.state.slittedDate
-            this.time = this.$store.state.slittedTime
+            this.shift = this.$store.state.slittedShift
         }
         
     },
@@ -215,18 +217,11 @@ import coil from "@/services/coil";
         formulatedWt(width) {
             return parseFloat(((this.coilData.weight / this.coilData.width) * width).toFixed(3))
         },
-        getTime() {
-            var quarterHours = ["00", "15", "30", "45"];
-            for(var i = 0; i < 24; i++) {
-                for(var j = 0; j < 4; j++) {
-                    this.times.push( ('0' + i).slice(-2) + ":" + quarterHours[j] );
-                }
-            }
-        },
         async updateSlits() {
             let data = {}
             let calendarDate = this.$options.filters.calendarDate(new Date().toISOString())
-            data.slit_date = this.selDate + ' ' + this.time;
+            data.slit_date = this.selDate;
+            data.slit_shift = this.shift
             data.slittedItems = [...this.slittedItems];
             this.slittedItems.map(item => {
                 item.created_at = calendarDate;
@@ -242,7 +237,7 @@ import coil from "@/services/coil";
             data.deletedItems = this.deletedItems;
 
           try {
-            const result = await coil.updateSlits(this.coilData.id, data)
+            const result = await coils.updateSlits(this.coilData.id, data)
             // this.savedData = result.data[0];
             console.log("result", result);
           } 
@@ -257,7 +252,8 @@ import coil from "@/services/coil";
         async saveSlit() {
             let data = {}
             let calendarDate = this.$options.filters.calendarDate(new Date().toISOString())
-            data.slit_date = this.selDate + ' ' + this.time;
+            data.slit_date = this.selDate;
+            data.slit_shift = this.shift;
             data.slittedItems = [...this.slittedItems];
             this.slittedItems.map(item => {
                 item.status = "in-queue"
@@ -272,7 +268,7 @@ import coil from "@/services/coil";
             }
 
             try {
-                const result = await coil.addSlits(this.coilData.id, data)
+                const result = await coils.addSlits(this.coilData.id, data)
                 this.savedData = result.data[0];
             } 
             catch (error) {

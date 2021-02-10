@@ -135,7 +135,7 @@
 </template>
 
 <script>
-    import coil from '@/services/coil';
+    import coils from '@/services/coils';
     import AddCoil from '@/components/drawers/AddCoil';
     import SlitCoil from '@/components/drawers/SlitCoil';
     export default {
@@ -213,7 +213,7 @@
                 }
                 if(text === "create slit") {
                     this.$store.state.selRows = [item]
-                    this.$router.push({path: "/slit_planning"});
+                    this.$router.push({path: "/slit-planning"});
                     console.log("this.$store.state.selRows", this.$store.state.selRows)
                 }
                     
@@ -222,7 +222,7 @@
             },
             openSlitForm() {
                 this.$store.state.selRows = this.selMultiRows;
-                this.$router.push({path:'/slit_planning'})
+                this.$router.push({path:'/slit-planning'})
             },
             setOptions() {
                 console.log("Calleddddddd")
@@ -275,7 +275,7 @@
             },
             async deleteCoil(id){
                 try {
-                const result = await coil.delete(id);
+                const result = await coils.delete(id);
                 this.$store.dispatch('getSlittedCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);
@@ -285,7 +285,7 @@
             },
             async editCoil(item){
                 try {
-                const result = await coil.update(item.id, item);
+                const result = await coils.update(item.id, item);
                 this.$store.dispatch('getSlittedCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);

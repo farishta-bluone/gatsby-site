@@ -5,7 +5,10 @@
             <v-col cols="auto">
                 <h2 class=" font-weight-bold">HR Coils</h2>
             </v-col>
-            <v-col cols="auto">
+            <v-col cols="auto" class="text-right">
+                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
+            </v-col>
+            <v-col cols="12" class="pb-0">
                 <v-row justify="end">
                     <v-col cols="auto" v-if="selMultiRows.length > 0">
                         <v-btn :dark="!preventSlitting" :disabled="preventSlitting" class="pt-4 pb-4 font-weight-bold" @click="openSlitForm">Create Slits</v-btn>
@@ -49,6 +52,42 @@
                         class="d-flex"
                         cols="auto"
                     >
+                        <v-text-field
+                            type="number"
+                            outlined
+                            color="grey"
+                            v-model.number="selThickness"
+                            placeholder="Select Thickness"
+                            @change="setOptions"
+                            dense
+                            clearable
+                            @click:clear="clearSearch('thickness')"
+                            class="body-1 select-box"
+                        ></v-text-field>
+                    </v-col>
+                    <!-- <v-col
+                        class="d-flex"
+                        cols="auto"
+                    >
+                        <v-select
+                        outlined
+                        dense
+                        v-model.number="selShift"
+                        :items="$store.state.shifts"
+                        label="Select Shift"
+                        item-text="name"
+                        item-value="id"
+                        color="grey"
+                        @input="setOptions"
+                        clearable
+                        @click:clear="clearSearch('shift')"
+                        class="select-box"
+                        ></v-select>
+                    </v-col> -->
+                    <v-col
+                        class="d-flex"
+                        cols="auto"
+                    >
                         <v-select
                         outlined
                         dense
@@ -61,6 +100,7 @@
                         @input="setOptions"
                         clearable
                         @click:clear="clearSearch('status')"
+                        class="select-box"
                         ></v-select>
                     </v-col>
 
@@ -71,21 +111,21 @@
                         <v-select
                         outlined
                         dense
-                        v-model="selCompany"
+                        v-model.number="selCompany"
                         :items="$store.state.companies"
                         label="Select Company"
                         item-text="name"
-                        item-value="name"
+                        item-value="id"
                         color="grey"
                         @input="setOptions"
                         clearable
                         @click:clear="clearSearch('company')"
+                        class="select-box"
                         ></v-select>
                     </v-col>
-                    <v-col cols="auto" class="text-right">
-                <!-- <v-btn dark color="#9932CC" class="mr-3 body-2 font-weight-bold" @click="slittedCoils">Slitted Coils</v-btn> -->
+                    <!-- <v-col cols="auto" class="text-right">
                 <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
-            </v-col>
+            </v-col> -->
                 </v-row>
             </v-col>
             <v-col class="red--text caption py-0" color="red" cols="12" v-if="preventSlitting">You can create slits for available coils only.</v-col>
@@ -102,12 +142,17 @@
             'items-per-page-options': [5, 10, 25, 50, 100]
             }"
             fixed-header
-            height="calc(100vh - 270px)"
+            height="calc(100vh - 300px)"
             :options.sync="options"
             :server-items-length="$store.state.totalRows"
             :single-select="singleSelect"
             show-select
         >
+            <template v-slot:[`item.company`]="{item}">
+                <div class="body-2"> 
+                    <span>{{showCompany(item.company)}}</span>
+                </div>
+            </template>
             <template v-slot:[`item.date`]="{item}">
                 <div class="body-2"> 
                     <span>{{ item.date ? $options.filters.formatDate(item.date) : '---'}}</span>
@@ -159,7 +204,7 @@
 </template>
 
 <script>
-    import coil from '@/services/coil';
+    import coils from '@/services/coils';
     import AddCoil from '@/components/drawers/AddCoil';
     import SlitCoil from '@/components/drawers/SlitCoil';
     export default {
@@ -169,6 +214,8 @@
         },
         data () {
             return {
+                selShift: '',
+                selThickness: '',
                 selMultiRows: [],
                 singleSelect: false,
                 actionsList: [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}, {icon:'mdi-view-grid', text: 'preview planning'},],
@@ -189,10 +236,10 @@
                     value: 'id',
                 },
                 { text: 'Company', value: 'company', sortable: false, },
-                { text: 'Parent ID', value: 'brand_no', sortable: false, },
+                { text: 'Parent Coil ID', value: 'brand_no', sortable: false, },
                 { text: 'Date of Receiving', value: 'date' },
                 { text: 'Status', value: 'status', sortable: false, },
-                { text: 'OD (mm)', value: 'od' },
+                // { text: 'OD (mm)', value: 'od' },
                 { text: 'Thickness (mm)', value: 'thickness' },
                 { text: 'Weight (kg)', value: 'weight' },
                 // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
@@ -203,6 +250,7 @@
         },
         mounted() {
             this.$store.dispatch('getCompanies');
+            this.$store.dispatch('getShifts');
             // this.getCoils();
         },
         watch: {
@@ -237,6 +285,11 @@
             }
         },
         methods: {
+            showCompany(id) {
+                if(this.$store.state.companies.length > 0) 
+                    return (this.$store.state.companies.find(val => val.id == id)).name
+                else return ''
+            },
             actions(text, item) {
                 if(text === "delete") 
                     this.deleteCoil(item.id);
@@ -252,7 +305,7 @@
                 if(text === "create slit") {
                     this.$store.state.coilId = item.id
                     this.$store.state.selRows = [item]
-                    this.$router.push({path: "/slit_planning"});
+                    this.$router.push({path: "/slit-planning"});
                 }
                 if(text === "preview planning") {
                     this.$store.state.coilId = item.id
@@ -261,12 +314,12 @@
                 }
                 if(text === "edit planning") {
                     this.$store.state.coilId = item.id
-                    this.$router.push({path: `/slit_planning/${item.id}`});
+                    this.$router.push({path: `/slit-planning/${item.id}`});
                 }
             },
             openSlitForm() {
                 this.$store.state.selRows = this.selMultiRows;
-                this.$router.push({path:'/slit_planning'})
+                this.$router.push({path:'/slit-planning'})
             },
             setOptions() {
                 console.log("Calleddddddd")
@@ -303,6 +356,8 @@
                if(type === 'date') this.addedFrom = null
                else if(type === 'status') this.selStatus = null
                else if(type === 'company') this.selCompany = null
+               else if(type === 'thickness') this.selThickness = null
+               else if(type === 'shift') this.selShift = null
                this.setOptions() 
             },
             searchData() {
@@ -315,11 +370,13 @@
                 if(this.selCompany) payload.company = this.selCompany
                 if(this.selStatus) payload.status = this.selStatus.toLowerCase()
                 if(this.addedFrom) payload.date = this.addedFrom
+                if(this.selThickness) payload.thickness = this.selThickness
+                if(this.selShift) payload.shift = this.selShift
                 this.$store.dispatch('getCoils', payload);
             },
             async deleteCoil(id){
                 try {
-                const result = await coil.delete(id);
+                const result = await coils.delete(id);
                 this.$store.dispatch('getCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);
@@ -329,7 +386,7 @@
             },
             async editCoil(item){
                 try {
-                const result = await coil.update(item.id, item);
+                const result = await coils.update(item.id, item);
                 this.$store.dispatch('getCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);
@@ -357,5 +414,8 @@
         color: grey !important; 
         padding-top: 18px !important; 
         padding-bottom: 20px !important;
+    }
+    .select-box.v-text-field.v-text-field--enclosed{
+        max-width: 200px;
     }
 </style>

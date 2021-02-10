@@ -4,8 +4,9 @@
       color="#455A64"
       dark
       fixed
+      style="z-index: 11"
     >
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon  @click="showMenu()"></v-app-bar-nav-icon>
     <!-- <v-avatar
         color="white"
         class="mx-5"
@@ -37,3 +38,21 @@
     </v-app-bar>
   </div>
 </template>
+
+<script>
+
+  export default {
+    name: 'Header',
+    data () {
+      return { 
+
+      }
+    },
+    methods: {
+      showMenu() {
+      this.$store.state.menu = true
+      this.$store.state.miniMenu = !this.$store.state.miniMenu
+    }
+    }
+  }
+</script>

@@ -4,7 +4,7 @@
     v-model="$store.state.coilDrawer"
     temporary
     right
-    width="390"  
+    width="360"  
     style="position:fixed; top:0; right:0; overflow-y:scroll; z-index:101"
   >
     <div class="subtitle-1 font-weight-bold px-4 py-2">
@@ -21,19 +21,18 @@
             <v-row class="px-4 mt-4">
                 <v-col cols="12" class="py-0">
                     <v-combobox
-                    v-model="data.company"
+                    v-model.trim="selCompany"
                     :items="$store.state.companies"
                     item-text="name"
-                    item-value="name"
                     label="Company"
                     outlined
                     color="grey"
                     dense
-                    :return-object="false"
+                    :return-object='false'
                     @change="changeCompany"
                     />
                 </v-col>
-                <v-col cols="6" class="py-0">
+                <v-col cols="12" class="py-0">
                     <v-menu
                         ref="menu"
                         v-model="dateMenu"
@@ -68,21 +67,24 @@
                         </v-date-picker>
                     </v-menu>
                 </v-col>
-                <v-col class="py-0 my-0" cols="6">
-                  <v-combobox
-                    v-model="time"
-                    :items="times"
-                    outlined
-                    dense
-                    color="grey"
-                    label="Select Time"
-                  />
+                <v-col class="py-0 my-0" cols="12">
+                  <v-select
+                        outlined
+                        dense
+                        v-model="data.shift"
+                        :items="$store.state.shifts"
+                        label="Select Shift"
+                        item-text="name"
+                        item-value="id"
+                        color="grey"
+                        
+                        ></v-select>
                 </v-col>
               <v-col cols="12" class="py-0">
                 <v-text-field
                   v-model="data.brand_no"
                   outlined
-                  label="Brand Number"
+                  label="Parent Coil ID"
                   color="grey"
                   dense
                 />
@@ -128,7 +130,7 @@
                   type="number"
                 />
               </v-col>
-              <v-col cols="12" class="py-0">
+              <!-- <v-col cols="12" class="py-0">
                 <v-text-field
                   v-model.number="data.od"
                   label="OD (mm)"
@@ -137,7 +139,7 @@
                   color="grey"
                   type="number"
                 />
-              </v-col>
+              </v-col> -->
             </v-row>
           </v-container>
     <v-divider />
@@ -161,24 +163,24 @@
 </template>
 
 <script>
-import coil from '@/services/coil';
+import coils from '@/services/coils';
 import companies from '@/services/companies';
   export default {
       name: 'AddCoil',
     data () {
       return {
+        selCompany: '',
         drawer: null,
         data: {},
         maxDate: new Date().toISOString(),
         dateMenu: false,
         selDate: null,
-        time: null,
-        times: []
+       
       }
     },
     computed: {
       validateForm() {
-          if(this.data.company && this.selDate && this.time && this.data.brand_no && this.data.thickness && this.data.width && this.data.weight && this.data.formulated_weight && this.data.od)
+          if(this.selCompany && this.selDate && this.data.brand_no && this.data.thickness && this.data.width && this.data.weight && this.data.formulated_weight && this.data.shift)
             return true
             else return false
       }
@@ -186,34 +188,27 @@ import companies from '@/services/companies';
     },
     mounted() {
         if(this.$store.state.coilId) {
-          console.log("checkkk", this.$store.state.coilData)
           let coilData = this.$store.state.coilData
           let date = this.$options.filters.calendarDate(coilData.date).split(" ");
-          const {brand_no, company, thickness, width, weight, formulated_weight, od} = coilData;
+          let result = this.$store.state.companies.find(item => item.id == coilData.company)
+          this.selCompany = result.name
+
+          const {brand_no, thickness, width, weight, formulated_weight, shift} = coilData;
           this.selDate = date[0];
-          this.time = date[1].split(":")[0] + ':' + date[1].split(":")[1]
-          this.data = {brand_no, company, thickness, width, weight, formulated_weight, od};
+          // this.time = date[1].split(":")[0] + ':' + date[1].split(":")[1]
+          this.data = {brand_no, thickness, width, weight, formulated_weight, shift};
         } else this.data = {}
-        this.getTime();
     },
     methods: {
       changeCompany(name) {
         let index = this.$store.state.companies.findIndex(item => item.name == name)
-        if(index < 0) {
-          this.addCompany(name)
+        if(index < 0 && name.trim().length > 0) {
+          this.addCompany(name.trim())
         }
       },
-        getTime() {
-            var quarterHours = ["00", "15", "30", "45"];
-            for(var i = 0; i < 24; i++) {
-                for(var j = 0; j < 4; j++) {
-                    this.times.push( ('0' + i).slice(-2) + ":" + quarterHours[j] );
-                }
-            }
-        },
-        clearSearch(data) {
-            console.log("data",data)
-        },
+      clearSearch(data) {
+          console.log("data",data)
+      },
         searchData() {
 
         },
@@ -230,12 +225,16 @@ import companies from '@/services/companies';
             }
         },
         async addCoil(){
+          if(this.selCompany) {
+            let result = this.$store.state.companies.find(item => item.name.trim() == this.selCompany.trim())
+            this.data.company = result.id
+          }
           if(this.$store.state.coilId) this.editCoil();
           else {
-            this.data.date = `${this.selDate} ${this.time}`
+            this.data.date = `${this.selDate}`
             this.data.created_at = this.$options.filters.calendarDate(new Date().toISOString())
             try {
-              const result = await coil.add(this.data)
+              const result = await coils.add(this.data)
               console.log("result", result);
             } 
             catch (error) {
@@ -248,11 +247,12 @@ import companies from '@/services/companies';
           }  
         },
         async editCoil(){
-          this.data.date = `${this.selDate} ${this.time}`
+          this.data.status = "available"
+          this.data.date = `${this.selDate}`
           this.data.updated_at = this.$options.filters.calendarDate(new Date().toISOString())
           console.log("data", this.data)
           try {
-            const result = await coil.update(this.$store.state.coilId, this.data)
+            const result = await coils.update(this.$store.state.coilId, this.data)
             // this.rows = result.data.rows;
             console.log("result", result);
           } 

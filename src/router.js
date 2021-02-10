@@ -29,14 +29,30 @@ export default new Router ({
             component: () => import("@/pages/CoilsList.vue")
         },
         {
-          path: "/slit_planning/:id",
-          name: "edit_slit_planning",
+          path: "/slit-planning/:id",
+          name: "edit-slit-planning",
           component: () => import("@/pages/SlittedCoils.vue")
         },
         {
-          path: "/slit_planning",
-          name: "slit_planning",
+          path: "/slit-planning",
+          name: "slit-planning",
           component: () => import("@/pages/SlittedCoils.vue")
-        }
+        },
+        {
+          path: "/preview-planning",
+          name: "preview-planning",
+          component: () => import("@/pages/SlitPlanning.vue")
+        },
+        {
+          path: "/companies",
+          name: "companies",
+          component: () => import("@/pages/Companies.vue")
+        },
+        // {
+        //   path: "/slits",
+        //   name: "slits",
+        //   component: () => import("@/pages/SlittedCoilsList.vue")
+        // }
+
     ]
 })

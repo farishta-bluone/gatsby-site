@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import coil from '@/services/coil';
+import coils from '@/services/coils';
   export default {
       name: 'SlitCoil',
     data () {
@@ -155,7 +155,7 @@ import coil from '@/services/coil';
             // this.data.date = `${this.selDate} ${this.time}`
             // this.data.created_at = this.$options.filters.calendarDate(new Date().toISOString())
             try {
-                const result = await coil.getSlits(this.$store.state.coilId)
+                const result = await coils.getSlits(this.$store.state.coilId)
                 this.rows = result.data.rows;
                 console.log("result", result);
             } 

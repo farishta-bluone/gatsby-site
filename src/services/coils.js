@@ -1,10 +1,10 @@
 import httpClient from './httpClient';
 
-const END_POINT = '/slittedCoil';
+const END_POINT = '/coils';
 
 export default {
-    get() {
-        return httpClient.get(`${END_POINT}/list`)
+    get(payload) {
+        return httpClient.get(`${END_POINT}`, {params: payload})
     },
     add(params) {
         return httpClient.post(`${END_POINT}`,params)
@@ -16,9 +16,15 @@ export default {
         // let newIds = ids.join()
         return httpClient.put(`${END_POINT}/${id}`, params)
     },
-    // getOne(payload) {
-    //     return httpClient.get(`${END_POINT}/${payload.id}`,{params:payload.data })
-    // },
+    getSlits(id) {
+        return httpClient.get(`${END_POINT}/${id}/slits`)
+    },
+    addSlits(id, params) {
+        return httpClient.post(`${END_POINT}/${id}/slits`,params)
+    },
+    updateSlits(id, params) {
+        return httpClient.put(`${END_POINT}/${id}/slits`, params)
+    },
     // prevNext(ids,data) {
     //     let newIds = ids.join()
     //     return httpClient.get(`${END_POINT}/${newIds}/prev-next`,{params:data })
