@@ -35,7 +35,7 @@ export default new Vuex.Store({
     getSlittedCoils({state}, payload) {
       if(!payload) payload = {}
       state.isLoading = true
-      return slittedCoils.get()
+      return slittedCoils.get(payload)
           .then((res) => {
               state.slittedCoils = res.data.rows;
               // state.totalRows = res.data.count;

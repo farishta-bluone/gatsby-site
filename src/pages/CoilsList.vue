@@ -65,7 +65,7 @@
                             class="body-1 select-box"
                         ></v-text-field>
                     </v-col>
-                    <!-- <v-col
+                    <v-col
                         class="d-flex"
                         cols="auto"
                     >
@@ -74,7 +74,7 @@
                         dense
                         v-model.number="selShift"
                         :items="$store.state.shifts"
-                        label="Select Shift"
+                        label="Select Slit Shift"
                         item-text="name"
                         item-value="id"
                         color="grey"
@@ -83,7 +83,7 @@
                         @click:clear="clearSearch('shift')"
                         class="select-box"
                         ></v-select>
-                    </v-col> -->
+                    </v-col>
                     <v-col
                         class="d-flex"
                         cols="auto"
@@ -371,7 +371,7 @@
                 if(this.selStatus) payload.status = this.selStatus.toLowerCase()
                 if(this.addedFrom) payload.date = this.addedFrom
                 if(this.selThickness) payload.thickness = this.selThickness
-                if(this.selShift) payload.shift = this.selShift
+                if(this.selShift) payload.slit_shift = this.selShift
                 this.$store.dispatch('getCoils', payload);
             },
             async deleteCoil(id){

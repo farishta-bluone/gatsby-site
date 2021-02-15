@@ -3,8 +3,8 @@ import httpClient from './httpClient';
 const END_POINT = '/slitted-coils';
 
 export default {
-    get() {
-        return httpClient.get(`${END_POINT}`)
+    get(payload) {
+        return httpClient.get(`${END_POINT}`, {params: payload})
     },
     add(params) {
         return httpClient.post(`${END_POINT}`,params)

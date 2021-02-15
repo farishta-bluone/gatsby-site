@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container fluid>
         <v-row class="mt-3"><v-col class="py-0" cols="12"><v-btn @click="goBack" class="caption" text>Go Back</v-btn></v-col></v-row>
         <v-row justify="space-around" class=" mx-1">
             <!-- <v-col class="py-0" cols="12"><v-btn class="caption" text>Back</v-btn></v-col> -->

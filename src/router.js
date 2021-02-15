@@ -39,9 +39,9 @@ export default new Router ({
           component: () => import("@/pages/SlittedCoils.vue")
         },
         {
-          path: "/preview-planning",
-          name: "preview-planning",
-          component: () => import("@/pages/SlitPlanning.vue")
+          path: "/slits-preview",
+          name: "slits-preview",
+          component: () => import("@/pages/SlitsPreview.vue")
         },
         {
           path: "/companies",

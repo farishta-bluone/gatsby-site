@@ -4,7 +4,7 @@
     v-model="$store.state.slitDrawer"
     temporary
     right
-    width="390"  
+    width="420"  
     style="position:fixed; top:0; right:0; overflow-y:scroll; z-index:101"
   >
     <div class="body-1 font-weight-bold px-4 py-2">Slits Preview
@@ -23,7 +23,18 @@
               <v-col cols="12">
                 <p class="body-1 font-weight-bold mb-1">Parent Coil:  {{rows[0].brand_no}}</p>
               </v-col>
-                <v-col cols="6" class="py-0">
+              <v-col cols="4" class="py-0">
+                <v-text-field
+                  :value="rows[0].thickness"
+                  label="Thickness"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                  readonly
+                />
+              </v-col>
+                <v-col cols="4" class="py-0">
                 <v-text-field
                   :value="rows[0].weight"
                   label="Weight (kg)"
@@ -34,7 +45,7 @@
                   readonly
                 />
               </v-col>
-              <v-col cols="6" class="py-0">
+              <v-col cols="4" class="py-0">
                 <v-text-field
                   :value="rows[0].width"
                   label="Width (mm)"
@@ -61,8 +72,18 @@
             </div>
             
             <v-row class="px-4" v-for="(item) in rows" :key="item.id">
-              <!-- <v-col cols="auto">{{index +1 }}</v-col> -->
-              <v-col cols="6" class="py-0">
+              <!-- <v-col cols="3" class="pr-0">No.{{item.slit_no}}</v-col> -->
+              <v-col  class="py-0" v-if="$route.path.includes('preview')">
+                <v-text-field
+                  v-model.number="item.slit_no"
+                  label="Slit No"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                />
+              </v-col>
+              <v-col class="py-0">
                 <v-text-field
                   :value="item.slitted_weight"
                   label="Weight (kg)"
@@ -73,7 +94,7 @@
                   :readonly="!editFlag"
                 />
               </v-col>
-              <v-col cols="6" class="py-0">
+              <v-col  class="py-0">
                 <v-text-field
                   :value="item.slitted_width"
                   label="Width (mm)"
@@ -88,7 +109,7 @@
             </v-row>
           </v-container>
     <v-divider />
-    <!-- <div class="mx-4 mt-8 float-right">
+    <div class="mx-4 mt-8 float-right" v-if="$route.path.includes('preview')">
       <v-btn
         class="mr-2"
         outlined
@@ -97,13 +118,13 @@
         Cancel
       </v-btn>
       <v-btn
-       
-        :dark="validateForm"
-        :disabled="!validateForm"
+        :dark="validateSlitNo"
+        :disabled="!validateSlitNo"
+        @click="markComplete"
       >
-        Save
+        Mark Complete
       </v-btn>
-    </div> -->
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -125,6 +146,16 @@ import coils from '@/services/coils';
       }
     },
     computed: {
+      validateSlitNo() {
+        let flag = true
+        for(let i=0 ; i<this.rows.length ; i++) {
+            if(!this.rows[i].slit_no) {
+                flag = false
+                break
+            }
+        }
+        return flag
+      },
       validateForm() {
           if(this.data.company && this.selDate && this.time && this.data.brand_no && this.data.thickness && this.data.width && this.data.weight)
             return true
@@ -134,17 +165,26 @@ import coils from '@/services/coils';
     },
     mounted() {
         this.getSlits();
-        console.log("Calleddd")
     },
     methods: {
-        getTime() {
-            var quarterHours = ["00", "15", "30", "45"];
-            for(var i = 0; i < 24; i++) {
-                for(var j = 0; j < 4; j++) {
-                    this.times.push( ('0' + i).slice(-2) + ":" + quarterHours[j] );
-                }
-            }
-        },
+      async markComplete() {
+        let data = {slittedItems: [], status: "slitted"}
+        this.rows.map(item => {
+          data.slittedItems.push({ID: item.ID, slit_no: item.slit_no, status: "slitted"})
+        })
+        try {
+            const result = await coils.updateSlits(this.$store.state.coilId, data)
+            // this.savedData = result.data[0];
+            console.log("result", result);
+          } 
+          catch (error) {
+            console.log("error",error)
+          }
+          finally {
+            this.$store.state.slitDrawer = false
+            this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
+          }
+      },
         clearSearch(data) {
             console.log("data",data)
         },

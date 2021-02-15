@@ -84,7 +84,7 @@
         {
           action: 'mdi-paper-roll',
           items: [{ title: 'HR Stock', icon: 'mdi-paper-roll', link: '/coils' },
-          { title: 'Slits Preview', icon: 'mdi-view-grid', link: '/preview-planning' },
+          { title: 'Slits Preview', icon: 'mdi-view-grid', link: '/slits-preview' },
           { title: 'Slits Stock', icon: 'mdi-rollupjs', link: '/' }],
           title: 'Hot Rolled',
         },

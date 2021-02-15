@@ -1,5 +1,5 @@
 <template>
-    <v-container class="my-5">
+    <v-container fluid class="my-5">
         <v-expansion-panels>
             <v-expansion-panel>
                 <v-expansion-panel-header>
@@ -31,8 +31,8 @@
                         <v-col cols="8">
                             <v-row>
                                 <v-col cols="9">
-                                    <v-row class="mb-5">
-                                        <v-col cols="6">
+                                    <v-row class="mb-5" justify="space-between">
+                                        <v-col cols="7">
                                             <h4>Slit Planning</h4>
                                         </v-col>
                                         <v-col>
@@ -45,10 +45,20 @@
                                             <!-- <v-col cols="12"> <v-divider class="py-2"></v-divider></v-col> -->
                                                 <v-col cols="auto">
                                                     <v-row>
+                                                        <!-- <v-col cols="auto" class="py-0">
+                                                            <v-text-field
+                                                                v-model.number="item.slit_no"
+                                                                label="Slit No"
+                                                                outlined
+                                                                dense
+                                                                color="grey"
+                                                                type="number"
+                                                                />
+                                                        </v-col> -->
                                                         <v-col cols="auto" class="py-0">
                                                             <v-text-field
                                                             v-model.number="item.slitted_width"
-                                                            label="Slitted Width (mm)"
+                                                            label="Slit Width (mm)"
                                                             outlined
                                                             dense
                                                             color="grey"
@@ -57,7 +67,7 @@
                                                         </v-col>
                                                         <v-col cols="auto" class="py-0">
                                                             <v-text-field
-                                                            label="Slitted Weight (kg)"
+                                                            label="Slit Weight (kg)"
                                                             outlined
                                                             dense
                                                             color="grey"
@@ -83,10 +93,10 @@
                                 </v-col>
                                 <v-col cols="3">
                                     <v-row class="mb-3">
-                                        <v-col cols="12" >
+                                        <v-col cols="12">
                                             <h4 class="mb-5">Schedule</h4>
                                         </v-col>
-                                    <v-col cols="12" class="py-0">
+                                        <v-col cols="12" class="py-0">
                                         <v-menu
                                             ref="menu"
                                             v-model="dateMenu"
@@ -220,6 +230,7 @@ import coils from "@/services/coils";
         async updateSlits() {
             let data = {}
             let calendarDate = this.$options.filters.calendarDate(new Date().toISOString())
+            data.status = "in-queue";
             data.slit_date = this.selDate;
             data.slit_shift = this.shift
             data.slittedItems = [...this.slittedItems];
@@ -252,6 +263,7 @@ import coils from "@/services/coils";
         async saveSlit() {
             let data = {}
             let calendarDate = this.$options.filters.calendarDate(new Date().toISOString())
+            data.status = "in-queue"
             data.slit_date = this.selDate;
             data.slit_shift = this.shift;
             data.slittedItems = [...this.slittedItems];

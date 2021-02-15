@@ -25,6 +25,10 @@ export default {
     updateSlits(id, params) {
         return httpClient.put(`${END_POINT}/${id}/slits`, params)
     },
+    deleteSlits(id, payload) {
+        console.log(payload)
+        return httpClient.delete(`${END_POINT}/${id}/slits`, {params: payload})
+    },
     // prevNext(ids,data) {
     //     let newIds = ids.join()
     //     return httpClient.get(`${END_POINT}/${newIds}/prev-next`,{params:data })
