@@ -167,7 +167,7 @@ import coils from '@/services/coils';
     },
     methods: {
       async markComplete() {
-        let data = {slittedItems: [], status: "slitted"}
+        let data = {slittedItems: [], status: "slitted", updated_at: this.$options.filters.calendarDate(new Date().toISOString())}
         this.rows.map(item => {
           data.slittedItems.push({ID: item.ID, slit_no: item.slit_no, status: "slitted"})
         })

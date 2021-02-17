@@ -325,16 +325,16 @@
         methods: {
             async resetCoil(item) {
                 console.log(item)
-                let data = {status: 'available', slit_ids: ''}
+                let data = {status: 'available', ids: '', updated_at: this.$options.filters.calendarDate(new Date().toISOString())}
                 // let ids = null
                 item.slits.map(val => {
-                    if(data.slit_ids)
-                        data.slit_ids = `${data.slit_ids},${val.id}`  
-                    else data.slit_ids = val.id
+                    if(data.ids)
+                        data.ids = `${data.ids},${val.id}`  
+                    else data.ids = val.id
                 })
                 console.log("Data",)
                 try {
-                const result = await coils.deleteSlits(item.id, {ids:data.slit_ids});
+                const result = await coils.deleteSlits(item.id, data);
                 // this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
                 // this.$store.dispatch('getCoils', {page: 1});
                 // this.rows = result.data.rows;
