@@ -182,6 +182,8 @@ import coils from '@/services/coils';
           }
           finally {
             this.$store.state.slitDrawer = false
+            this.$store.state.previewDate = null
+            this.$store.state.previewShift = null
             this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
           }
       },

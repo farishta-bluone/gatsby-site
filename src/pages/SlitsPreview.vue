@@ -9,7 +9,7 @@
                     <v-col cols="auto">
                         <v-menu
                             ref="menu"
-                            v-model="addedFromMenu"
+                            v-model="menu"
                             :close-on-content-click="false"
                             transition="scale-transition"
                             offset-y
@@ -20,7 +20,7 @@
                                     dense
                                     outlined
                                     color="grey"
-                                    v-model="addedFrom"
+                                    v-model="$store.state.previewDate"
                                     placeholder="Select Date"
                                     readonly
                                     v-bind="attrs"
@@ -32,12 +32,11 @@
                                 ></v-text-field>
                             </template>
                             <v-date-picker
-                                v-model="addedFrom"
+                                v-model="$store.state.previewDate"
                                 no-title
                                 scrollable
-                                @input="addedFromMenu = false"
+                                @input="menu = false"
                                 @change="setOptions"
-                                :max="maxDate"
                                 >
                             </v-date-picker>
                         </v-menu>
@@ -49,7 +48,7 @@
                         <v-select
                         outlined
                         dense
-                        v-model.number="selShift"
+                        v-model.number="$store.state.previewShift"
                         :items="$store.state.shifts"
                         label="Select Shift"
                         item-text="name"
@@ -78,7 +77,7 @@
             'items-per-page-options': [5, 10, 25, 50, 100]
             }"
             fixed-header
-            height="calc(100vh - 250px)"
+            height="calc(100vh - 190px)"
             :options.sync="options"
             :server-items-length="2"
             id="pdf"
@@ -232,7 +231,6 @@
         },
         data () {
             return {
-                selShift: '',
                 selMultiRows: [],
                 singleSelect: false,
                 actionsList: [{icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}],
@@ -241,8 +239,7 @@
                 orderBy: 'desc',
                 selCompany: null,
                 selStatus: null,
-                addedFromMenu: false,
-                addedFrom: null,
+                menu: false,
                 maxDate: new Date().toISOString(),
                 headline: '',
                 statusList: [{id:1, name: 'Avilable' },{id:2, name: 'Slitted' } ],
@@ -346,6 +343,8 @@
                 console.log("error",error)
                 }
                 finally {
+                    this.$store.state.previewDate = null;
+                    this.$store.state.previewShift = null
                     this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
                 }
             },
@@ -414,10 +413,10 @@
         },
           
             clearSearch(type) {
-               if(type === 'date') this.addedFrom = null
+               if(type === 'date') this.$store.state.previewDate = null
                else if(type === 'status') this.selStatus = null
                else if(type === 'company') this.selCompany = null
-               else if(type === 'shift') this.selShift = null
+               else if(type === 'shift') this.$store.state.previewShift = null
                this.setOptions() 
             },
             searchData() {
@@ -428,8 +427,8 @@
                 payload.page = page
                 payload.limit =  itemsPerPage
                 // if(this.selCompany) payload.company = this.selCompany
-                if(this.selShift) payload.slit_shift = this.selShift
-                if(this.addedFrom) payload.date = this.addedFrom
+                if(this.$store.state.previewShift) payload.slit_shift = this.$store.state.previewShift
+                if(this.$store.state.previewDate) payload.slit_date = this.$store.state.previewDate
                 this.$store.dispatch('getSlittedCoils', payload);
             },
             // async deleteCoil(id){

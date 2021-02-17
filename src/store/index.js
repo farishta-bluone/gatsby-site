@@ -11,6 +11,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    previewShift: null,
+    previewDate: null,
     miniMenu: true,
     shifts: [],
     slittedDate: null,

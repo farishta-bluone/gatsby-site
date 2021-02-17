@@ -235,7 +235,7 @@ import coils from "@/services/coils";
             data.slit_shift = this.shift
             data.slittedItems = [...this.slittedItems];
             this.slittedItems.map(item => {
-                item.created_at = calendarDate;
+                item.created_at = item.created_at ? item.created_at : calendarDate;
                 item.updated_at = calendarDate;
                 item.slitted_weight = this.formulatedWt(item.slitted_width)
                 item.status = "in-queue"
