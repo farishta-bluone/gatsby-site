@@ -201,7 +201,7 @@ import companies from '@/services/companies';
     },
     methods: {
       changeCompany(name) {
-        let index = this.$store.state.companies.findIndex(item => item.name == name)
+        let index = this.$store.state.companies.findIndex(item => (item.name.trim()).toLowerCase() == name.trim().toLowerCase())
         if(index < 0 && name.trim().length > 0) {
           this.addCompany(name.trim())
         }

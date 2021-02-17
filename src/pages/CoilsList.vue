@@ -279,6 +279,7 @@
                 let actions = []
                 if(item.status === 'available') 
                     actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}]
+                else if (item.status === 'slitted') actions = [{icon:'mdi-view-grid', text: 'preview planning'}]
                 else actions = [{icon:'mdi-view-grid', text: 'preview planning'}, {icon:'mdi-pencil', text: 'edit planning'},]
                 return item.actions = actions
                 })

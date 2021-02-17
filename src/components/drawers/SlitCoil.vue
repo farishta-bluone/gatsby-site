@@ -73,14 +73,13 @@
             
             <v-row class="px-4" v-for="(item) in rows" :key="item.id">
               <!-- <v-col cols="3" class="pr-0">No.{{item.slit_no}}</v-col> -->
-              <v-col  class="py-0" v-if="$route.path.includes('preview')">
+              <v-col  class="py-0" v-if="($route.path.includes('preview') || item.slit_no)">
                 <v-text-field
-                  v-model.number="item.slit_no"
+                  v-model="item.slit_no"
                   label="Slit No"
                   outlined
                   dense
                   color="grey"
-                  type="number"
                 />
               </v-col>
               <v-col class="py-0">
@@ -181,10 +180,11 @@ import coils from '@/services/coils';
             console.log("error",error)
           }
           finally {
+            let payload = {status: "in-queue"}
+            if(this.$store.state.previewShift) payload.slit_shift = this.$store.state.previewShift
+            if(this.$store.state.previewDate) payload.slit_date = this.$store.state.previewDate
             this.$store.state.slitDrawer = false
-            this.$store.state.previewDate = null
-            this.$store.state.previewShift = null
-            this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
+            this.$store.dispatch('getSlittedCoils', payload);
           }
       },
         clearSearch(data) {

@@ -343,9 +343,7 @@
                 console.log("error",error)
                 }
                 finally {
-                    this.$store.state.previewDate = null;
-                    this.$store.state.previewShift = null
-                    this.$store.dispatch('getSlittedCoils', {status: 'in-queue'});
+                    this.searchData();
                 }
             },
             openDrawer(item) {
@@ -355,27 +353,6 @@
             },
             downloadPdf() {
                 this.$htmlToPaper('checkMe');
-            },
-            actions(text, item) {
-                if(text === "delete") 
-                    this.deleteCoil(item.id);
-                if(text === "edit") {
-                    this.$store.state.coilId = item.id
-                    this.$store.state.coilData = item
-                    this.$store.state.coilDrawer = true
-                    // this.editCoil(item);
-                } else {
-                    this.$store.state.coilId = null
-                    this.$store.state.coilData = {}
-                }
-                if(text === "create slit") {
-                    this.$store.state.selRows = [item]
-                    this.$router.push({path: "/slit-planning"});
-                    console.log("this.$store.state.selRows", this.$store.state.selRows)
-                }
-                    
-                    // this.editCoil(item);
-                console.log(text, item)
             },
             openSlitForm() {
                 this.$store.state.selRows = this.selMultiRows;
