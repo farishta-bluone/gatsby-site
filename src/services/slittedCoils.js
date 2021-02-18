@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 
-const END_POINT = '/slitted-coils';
+const END_POINT = '/slits';
 
 export default {
     get(payload) {

@@ -48,11 +48,11 @@ export default new Router ({
           name: "companies",
           component: () => import("@/pages/Companies.vue")
         },
-        // {
-        //   path: "/slits",
-        //   name: "slits",
-        //   component: () => import("@/pages/SlittedCoilsList.vue")
-        // }
+        {
+          path: "/slits",
+          name: "slits",
+          component: () => import("@/pages/SlitsStock.vue")
+        }
 
     ]
 })
