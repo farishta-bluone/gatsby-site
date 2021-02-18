@@ -2,7 +2,7 @@ import axios from 'axios'
 import $router from "@/router"
 
 const httpClient = axios.create({
-    baseURL: "https://api-pp.vanser.org/",
+    baseURL: "https://api-uat.vanser.org/",
     timeout: 500000,
     withCredentials: false,
     headers: {
