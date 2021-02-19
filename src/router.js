@@ -52,6 +52,11 @@ export default new Router ({
           path: "/slits",
           name: "slits",
           component: () => import("@/pages/SlitsStock.vue")
+        },
+        {
+          path: "/compare-slits",
+          name: "compare-slits",
+          component: () => import("@/pages/CompareSlits.vue")
         }
 
     ]

@@ -52,18 +52,20 @@
                         class="d-flex"
                         cols="auto"
                     >
-                        <v-text-field
-                            type="number"
+                        <v-select
                             outlined
-                            color="grey"
-                            v-model.number="selThickness"
-                            placeholder="Select Thickness"
-                            @change="setOptions"
                             dense
+                            v-model.number="selThickness"
+                            :items="$store.state.thicknessList"
+                            label="Select Thickness"
+                            item-text="value"
+                            item-value="value"
+                            color="grey"
+                            @input="setOptions"
                             clearable
                             @click:clear="clearSearch('thickness')"
-                            class="body-1 select-box"
-                        ></v-text-field>
+                            class="select-box"
+                        ></v-select>
                     </v-col>
                     <v-col
                         class="d-flex"
@@ -251,7 +253,7 @@
         mounted() {
             this.$store.dispatch('getCompanies');
             this.$store.dispatch('getShifts');
-            // this.getCoils();
+            this.$store.dispatch('getThicknesses');
         },
         watch: {
             options: {

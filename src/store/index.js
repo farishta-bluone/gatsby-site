@@ -6,11 +6,14 @@ import coils from '@/services/coils';
 import companies from '@/services/companies';
 import shifts from '@/services/shifts';
 import slittedCoils from '@/services/slittedCoils';
+import thicknesses from '@/services/thicknesses';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    slitCards: [{id:1, thickness: null, slittedCoils: []}],
+    thicknessList: [],
     previewShift: null,
     previewDate: null,
     miniMenu: true,
@@ -49,6 +52,13 @@ export default new Vuex.Store({
       return companies.get()
         .then((res) => {
           state.companies = res.data.rows
+        })
+        .catch((error) => console.log("error",error))
+    },
+    getThicknesses({state}) {
+      return thicknesses.get()
+        .then((res) => {
+          state.thicknessList = res.data.rows
         })
         .catch((error) => console.log("error",error))
     },

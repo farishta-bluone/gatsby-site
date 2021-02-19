@@ -5,27 +5,27 @@
             <v-col cols="auto">
                 <h2 class=" font-weight-bold">Slits Stock</h2>
             </v-col>
-            <!-- <v-col cols="auto" class="text-right">
-                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
-            </v-col> -->
+            
             <v-col cols="auto" class="pb-0">
                 <v-row justify="end">
                    <v-col
                         class="d-flex"
                         cols="auto"
                     >
-                        <v-text-field
-                            type="number"
+                        <v-select
                             outlined
-                            color="grey"
-                            v-model.number="selThickness"
-                            placeholder="Select Thickness"
-                            @change="setOptions"
                             dense
+                            v-model.number="selThickness"
+                            :items="$store.state.thicknessList"
+                            label="Select Thickness"
+                            item-text="value"
+                            item-value="value"
+                            color="grey"
+                            @input="setOptions"
                             clearable
                             @click:clear="clearSearch('thickness')"
-                            class="body-1 select-box"
-                        ></v-text-field>
+                            class="select-box"
+                        ></v-select>
                     </v-col>
                     <v-col cols="auto">
                         <v-menu
@@ -61,7 +61,9 @@
                             </v-date-picker>
                         </v-menu>
                     </v-col>
-                    
+                    <v-col cols="auto" class="text-right">
+                        <v-btn dark   class="py-5 mr-1 body-2 font-weight-bold" @click="$router.push({path: '/compare-slits'})">Compare Slits</v-btn>
+                    </v-col>
                 
                     <!-- <v-col cols="auto" class="text-right">
                 <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
@@ -186,6 +188,7 @@
         },
         mounted() {
             this.$store.dispatch('getSlittedCoils', {status: "slitted"});
+            this.$store.dispatch('getThicknesses');
         },
         watch: {
             options: {

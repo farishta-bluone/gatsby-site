@@ -94,8 +94,8 @@
             <template v-slot:[`item.parent_size`]="{item}">
                 <div class="body-2"> 
                     <p class="mb-0">Width: {{item.width}} mm</p>
-                    <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                     <p class="mb-0">Weight: {{item.weight}} kg</p>
+                    <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                 </div>
             </template>
 
@@ -134,38 +134,6 @@
                     <v-col @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Review & Complete</v-btn></v-col>
                     <v-col @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
                 </v-row>
-                
-                <!-- <v-menu>
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                        
-                    >
-                        <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                    </template>
-
-                    <v-list dense>
-                    <v-list-item
-                        v-for="(val) in actionsList"
-                        :key="val.text"
-                        @click="actions(val.text, item)"
-                    >
-                        <v-list-item-icon class="mr-0">
-                        <v-icon
-                            class="mt-1"
-                            small
-                            v-text="val.icon"
-                        />
-                        </v-list-item-icon>
-                        <v-list-item-title class="body-2 text-capitalize mt-1">
-                        {{ val.text }}
-                        </v-list-item-title>
-                    </v-list-item>
-                    </v-list>
-                </v-menu> -->
         </template>
             
         </v-data-table>
@@ -187,8 +155,8 @@
                         <td>
                         <div> 
                                 <p class="mb-0">Width: {{item.width}} mm</p>
-                                <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                                 <p class="mb-0">Weight: {{item.weight}} kg</p>
+                                <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                             </div> 
                         </td>
                         <!-- <td>
