@@ -80,12 +80,10 @@
             
             class="elevation-1 coils"
             :loading="$store.state.isLoading"
-            :footer-props="{
-            'items-per-page-options': [5, 10, 25, 50, 100]
-            }"
+            disable-pagination
             fixed-header
             height="calc(100vh - 190px)"
-            :options.sync="options"
+            
             hide-default-footer
             
         >

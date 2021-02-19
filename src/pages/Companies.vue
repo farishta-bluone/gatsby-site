@@ -80,7 +80,7 @@
             :loading="$store.state.isLoading"
             fixed-header
             height="calc(100vh - 270px)"
-            
+            disable-pagination
         >
             <template v-slot:[`item.actions`]="{ item }">
                 <v-icon

@@ -70,7 +70,6 @@
             v-model="selMultiRows"
             :headers="headers"
             :items="orderedData"
-            :items-per-page="10"
             class="elevation-1 coils"
             :loading="$store.state.isLoading"
             :footer-props="{
@@ -79,7 +78,7 @@
             fixed-header
             height="calc(100vh - 190px)"
             :options.sync="options"
-            :server-items-length="2"
+            disable-pagination
             id="pdf"
             :single-select="singleSelect"
             show-select
