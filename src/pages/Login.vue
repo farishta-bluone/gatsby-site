@@ -1,5 +1,5 @@
 <template>
-  <v-container style= "background-color:#01579B; height: 100vh" fill-height fluid>
+  <v-container style= "background-color:#455A64; height: 100vh" fill-height fluid>
     <v-row 
       class="pa=0 ma-0" 
       align="center"
@@ -15,7 +15,7 @@
         >
         <img height="100" src="../assets/images/VM_logo.png">
           <v-card-text class="text--primary">
-            <p class="text-left mb-1">Username or Email Address</p>
+            <p class="text-left mb-1">Username</p>
             <v-text-field
               v-model="email"
               dense
@@ -64,7 +64,6 @@
               :disabled="email.length <= 0 || pwd.length <= 0 " 
               :loading="loading" 
               @click="submitHandler()" 
-              color="#9932CC" 
               class="px-3 text-capitalize font-weight-medium" 
               >Sign In
             </v-btn>
@@ -76,7 +75,7 @@
 </template>
 
 <script>
-
+import login from '../services/login'
 export default {
   name: 'Login',
   data: () => ({
@@ -101,34 +100,34 @@ export default {
     },
     async submitHandler() {
       this.loading = true
-      let data = {
+      try {
+        const response = await login.validateUser({
         email: this.email,
-        password: this.pwd,
-        type: "web"
+        pwd: this.pwd
+      })
+        let data = response.data;
+        let user = response.data.user;
+        localStorage.setItem('access_token', data.token)
+        this.$store.state.userInfo = user;
+        
+        localStorage.setItem('privileges', JSON.stringify(user.access))
+        localStorage.setItem('user', JSON.stringify({name: user.name, id: user.id, role: user.role}))
+        // this.$store.dispatch('user/getProfile')
+        this.errorMsg = ''
+        this.$router.push({path: '/coils'})
       }
-      console.log("data", data)
-      if(this.email == "farishtav5@gmail.com" && this.pwd === "123456") {
-          this.$router.push({path: '/list'})
+      catch (error) {
+        this.errorMsg = error.response.data.msg
       }
-    //   try {
-    //     const response = await login.userLogin(data)
-    //     localStorage.setItem('access_token', response.data.token)
-    //     this.$store.dispatch('user/getProfile')
-    //     this.errorMsg = ''
-    //     this.$router.push({path: '/news'})
-    //   }
-    //   catch (error) {
-    //     this.errorMsg = error.response.data.message
-    //   }
-    //   finally {
-    //     this.$store.state.logout = false
-    //     if(this.rememberMe) {
-    //     let encrypted = this.$aes.encrypt(this.pwd)
-    //     localStorage.setItem('email', this.email)
-    //     localStorage.setItem('pwd', encrypted)
-    //   }
-    //     this.loading = false
-    //   }
+      finally {
+        this.$store.state.logout = false
+        if(this.rememberMe) {
+        let encrypted = this.$aes.encrypt(this.pwd)
+        localStorage.setItem('email', this.email)
+        localStorage.setItem('pwd', encrypted)
+      }
+        this.loading = false
+      }
     }
   }
 };

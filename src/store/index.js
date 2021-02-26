@@ -7,11 +7,14 @@ import companies from '@/services/companies';
 import shifts from '@/services/shifts';
 import slittedCoils from '@/services/slittedCoils';
 import thicknesses from '@/services/thicknesses';
+import users from '@/services/users';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userInfo: {},
+    users: [],
     slitCards: [{id:1, thickness: null, slittedCoils: []}],
     thicknessList: [],
     previewShift: null,
@@ -34,7 +37,10 @@ export default new Vuex.Store({
     companies: [],
   },
   mutations: {
-      
+      checkPageAccess(state,name) {
+        const access = JSON.parse(localStorage.getItem('privileges'))
+        return access[`${name}`]
+      }
   },
   actions: {
     getSlittedCoils({state}, payload) {
@@ -52,6 +58,20 @@ export default new Vuex.Store({
       return companies.get()
         .then((res) => {
           state.companies = res.data.rows
+        })
+        .catch((error) => console.log("error",error))
+    },
+    getUsers({state}, payload) {
+      if(!payload) payload = {}
+      return users.get(payload)
+        .then((res) => {
+          if(payload.id) { //for single user
+            state.userInfo = res.data.rows[0]
+            const {name, id, role} = state.userInfo
+            localStorage.setItem('user', JSON.stringify({name, id, role}))
+            localStorage.setItem('privileges', JSON.stringify(state.userInfo.access))
+          } else state.users = res.data.rows
+        
         })
         .catch((error) => console.log("error",error))
     },

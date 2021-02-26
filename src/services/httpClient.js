@@ -1,6 +1,14 @@
 import axios from 'axios'
 import $router from "@/router"
 
+const getAuthToken = () => localStorage.getItem('access_token');
+
+const authInterceptor = (config) => {
+    if (getAuthToken())
+        config.headers.common['Authorization'] = 'Bearer ' + getAuthToken();
+    return config;  
+}
+
 const httpClient = axios.create({
     baseURL: "https://api-uat.vanser.org/",
     timeout: 500000,
@@ -10,6 +18,8 @@ const httpClient = axios.create({
         'Content-Type': 'application/json'
     }
 });
+
+httpClient.interceptors.request.use(authInterceptor);
 
 const errorInterceptor = error => {
     // handle error
@@ -27,6 +37,7 @@ const errorInterceptor = error => {
                 break;
     
             case 401: // authentication error, logout the user
+            localStorage.removeItem('access_token');
             $router.push({path: '/login'})
             break;
     

@@ -67,7 +67,7 @@
                             class="select-box"
                         ></v-select>
                     </v-col>
-                    <v-col
+                    <!-- <v-col
                         class="d-flex"
                         cols="auto"
                     >
@@ -85,7 +85,7 @@
                         @click:clear="clearSearch('shift')"
                         class="select-box"
                         ></v-select>
-                    </v-col>
+                    </v-col> -->
                     <v-col
                         class="d-flex"
                         cols="auto"

@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router ({
+const router = new Router ({
     mode: "history",
     scrollBehavior (to, from, savedPosition) {
         if (savedPosition) {
@@ -15,7 +15,7 @@ export default new Router ({
       },
 
     routes: [
-        { path: '/', redirect: { name: 'coils' }},
+        { path: '/', redirect: { name: "login" }},
 
         {
             path: "/login",
@@ -25,7 +25,7 @@ export default new Router ({
         },
         {
             path: "/coils",
-            name: "coils",
+            name: "hr_stock",
             component: () => import("@/pages/CoilsList.vue")
         },
         {
@@ -40,7 +40,7 @@ export default new Router ({
         },
         {
           path: "/slits-preview",
-          name: "slits-preview",
+          name: "slits_preview",
           component: () => import("@/pages/SlitsPreview.vue")
         },
         {
@@ -50,14 +50,47 @@ export default new Router ({
         },
         {
           path: "/slits",
-          name: "slits",
+          name: "slits_stock",
           component: () => import("@/pages/SlitsStock.vue")
         },
         {
           path: "/compare-slits",
           name: "compare-slits",
           component: () => import("@/pages/CompareSlits.vue")
-        }
+        },
+        {
+          path: "/users",
+          name: "users",
+          component: () => import("@/pages/Users.vue")
+        },
+        {
+          path: "/403",
+          name: "forbidden",
+          component: () => import("@/pages/Forbidden.vue")
+        },
+        {
+          path: "*",
+          name: "not_found",
+          component: () => import("@/pages/NotFound.vue")
+        },
 
     ]
 })
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('access_token')
+  const access = JSON.parse(localStorage.getItem('privileges'))
+  
+  if (to.name !== 'login' && !token) next({ name: 'login' })
+  
+  else {
+    if (to.name === 'login' && token) next(false)
+    else {
+      console.log("checkkk", access, to.name)
+      if(access && access[`${to.name}`] == false) next({name: "forbidden"})
+      else next()
+    }
+  }
+})
+
+export default router;

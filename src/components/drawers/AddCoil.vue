@@ -67,7 +67,7 @@
                         </v-date-picker>
                     </v-menu>
                 </v-col>
-                <v-col class="py-0 my-0" cols="12">
+                <!-- <v-col class="py-0 my-0" cols="12">
                   <v-select
                         outlined
                         dense
@@ -79,7 +79,7 @@
                         color="grey"
                         
                         ></v-select>
-                </v-col>
+                </v-col> -->
               <v-col cols="12" class="py-0">
                 <v-text-field
                   v-model="data.brand_no"
@@ -184,7 +184,7 @@ import thicknesses from '@/services/thicknesses';
     },
     computed: {
       validateForm() {
-          if(this.selCompany && this.selDate && this.data.brand_no && this.selThickness && this.data.width && this.data.weight && this.data.formulated_weight && this.data.shift)
+          if(this.selCompany && this.selDate && this.data.brand_no && this.selThickness && this.data.width && this.data.weight && this.data.formulated_weight)
             return true
             else return false
       }
@@ -197,11 +197,11 @@ import thicknesses from '@/services/thicknesses';
           let result = this.$store.state.companies.find(item => item.id == coilData.company)
           this.selCompany = result.name
 
-          const {brand_no, width, weight, formulated_weight, shift} = coilData;
+          const {brand_no, width, weight, formulated_weight} = coilData;
           this.selDate = date[0];
           this.selThickness = coilData.thickness;
           // this.time = date[1].split(":")[0] + ':' + date[1].split(":")[1]
-          this.data = {brand_no, width, weight, formulated_weight, shift};
+          this.data = {brand_no, width, weight, formulated_weight};
           
         } else this.data = {}
     },

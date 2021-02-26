@@ -95,6 +95,12 @@
           items: [{ title: 'Lists',icon: 'mdi-view-list', link: '/companies' }],
           title: 'Companies',
         },
+        {
+          action: 'mdi-account',
+          link: '/users',
+          items: [{ title: 'Lists',icon: 'mdi-account', link: '/users' }],
+          title: 'Users',
+        },
       ],
       }
     },
