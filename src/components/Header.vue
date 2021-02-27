@@ -61,6 +61,7 @@
     },
     logout () {
       // this.$store.state.logout = true
+      this.$store.state.miniMenu = true
       localStorage.removeItem('privileges');
       localStorage.removeItem('user');
       localStorage.removeItem('access_token');

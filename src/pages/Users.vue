@@ -185,6 +185,7 @@
         },
         data () {
             return {
+                pwd: null,
                 userRole: null,
                 userAccess: [],
                 errorMsg: '',
@@ -222,6 +223,9 @@
                 this.editedIndex = 0
                 this.dialog = true
                 this.name = ''
+                this.userAccess = [];
+                this.userRole = null;
+                this.pwd = null;
             },
             async deleteItem(id){
                 try {
@@ -243,6 +247,7 @@
             },
             editItem(item){
                 this.userRole = item.role;
+                this.pwd = item.pwd;
                 this.userAccess = []
                 for (const [key, value] of Object.entries(item.access)) {
                     if(value) this.userAccess.push(key)
@@ -260,7 +265,7 @@
                }
                 if(this.editedIndex > 0) {
                     try {
-                    const result = await users.update(this.editedIndex, {name: this.name, pwd: "123456", access: JSON.stringify(access), role: this.userRole});
+                    const result = await users.update(this.editedIndex, {name: this.name, pwd: this.pwd, access: JSON.stringify(access), role: this.userRole});
                     console.log("result", result);
                     } catch (error) {
                     console.log("error",error)
@@ -273,7 +278,7 @@
                 }
                 else {
                     try {
-                    const result = await users.add({name: this.name, pwd: "123456", access: JSON.stringify(access), role: this.userRole})
+                    const result = await users.add({name: this.name, pwd: "test123", access: JSON.stringify(access), role: this.userRole})
                     console.log("result", result);
                     } 
                     catch (error) {
