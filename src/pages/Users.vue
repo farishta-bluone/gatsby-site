@@ -158,6 +158,9 @@
                 <p class="py-0 my-1">Slits Preview: {{item.access.slits_preview ? 'Yes' : 'No'}}</p>
                 <p class="py-0 my-1">Users: {{item.access.users ? 'Yes' : 'No'}}</p>
             </template>
+            <template v-slot:[`item.role`]="{ item }">
+                <div class="text-capitalize">{{item.role}}</div>
+            </template>
             <template v-slot:[`item.actions`]="{ item }">
                 <v-icon
                     small
@@ -272,7 +275,7 @@
                     }
                     finally {
                         this.dialog = false
-                        this.$store.dispatch('getUsers', {id: this.editedIndex})
+                        // this.$store.dispatch('getUsers', {id: this.editedIndex})
                         this.$store.dispatch('getUsers')
                     }
                 }
