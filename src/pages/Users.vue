@@ -50,26 +50,24 @@
                 </v-row>
                 <v-row>
                     
-                    <v-col cols="auto" class="py-0">
-                        
+                    <v-col cols="auto" class="py-0">   
                         <v-radio-group
-                    v-model="userRole"
-                    row
-                    dense
-                    > <span class="mr-3 grey--text text--darken-2">User Role</span>
-                    <v-radio
-                        label="Admin"
-                        value="admin"
-                        color="grey darken-3"
-                    ></v-radio>
-                    <v-radio
-                        label="Member"
-                        value="member"
-                        color="grey darken-3"
-                    ></v-radio>
-                    </v-radio-group>
+                            v-model="userRole"
+                            row
+                            dense
+                        > <span class="mr-3 grey--text text--darken-2">User Role</span>
+                        <v-radio
+                            label="Admin"
+                            value="admin"
+                            color="grey darken-3"
+                        ></v-radio>
+                        <v-radio
+                            label="Member"
+                            value="member"
+                            color="grey darken-3"
+                        ></v-radio>
+                        </v-radio-group>
                     </v-col>
-                    
                 </v-row>
                 <v-row>
                     <v-col cols="12" class="body-1">User Access</v-col>

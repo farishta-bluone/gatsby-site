@@ -7,7 +7,7 @@
     width="420"  
     style="position:fixed; top:0; right:0; overflow-y:scroll; z-index:101"
   >
-    <div class="body-1 font-weight-bold px-4 py-2">Slits Preview
+    <div class="body-1 font-weight-bold px-4 py-2">HR Slitting Planning Preview
       <!-- <span>{{ $store.state.news.$store.state.coilDrawerStatus === 'edit' ? 'Edit News' : 'Add News'}}</span> -->
       <v-icon
         class="float-right"
@@ -76,7 +76,7 @@
               <v-col  class="py-0" v-if="($route.path.includes('preview') || item.slit_no)">
                 <v-text-field
                   v-model="item.slit_no"
-                  label="Slit No"
+                  label="Coil No"
                   outlined
                   dense
                   color="grey"

@@ -62,7 +62,6 @@
                             scrollable
                             @input="dateMenu = false"
                             @change="searchData"
-                            :max="maxDate"
                             >
                         </v-date-picker>
                     </v-menu>
@@ -133,6 +132,25 @@
                   type="number"
                 />
               </v-col>
+              <v-col cols="12" class="py-0 my-0">   
+                  <v-radio-group
+                    class="py-0 my-0"
+                      v-model="coilStatus"
+                      row
+                      dense
+                  > <span class="mr-3 grey--text text--darken-2">Status</span>
+                  <v-radio
+                      label="In-Transit"
+                      value="in-transit"
+                      color="grey darken-3"
+                  ></v-radio>
+                  <v-radio
+                      label="Available"
+                      value="available"
+                      color="grey darken-3"
+                  ></v-radio>
+                  </v-radio-group>
+              </v-col>
               <!-- <v-col cols="12" class="py-0">
                 <v-text-field
                   v-model.number="data.od"
@@ -179,7 +197,8 @@ import thicknesses from '@/services/thicknesses';
         maxDate: new Date().toISOString(),
         dateMenu: false,
         selDate: null,
-        selThickness: null
+        selThickness: null,
+        coilStatus: 'available',
       }
     },
     computed: {
@@ -200,6 +219,7 @@ import thicknesses from '@/services/thicknesses';
           const {brand_no, width, weight, formulated_weight} = coilData;
           this.selDate = date[0];
           this.selThickness = coilData.thickness;
+          this.coilStatus = coilData.status;
           // this.time = date[1].split(":")[0] + ':' + date[1].split(":")[1]
           this.data = {brand_no, width, weight, formulated_weight};
           
@@ -250,6 +270,7 @@ import thicknesses from '@/services/thicknesses';
         },
         async addCoil(){
           this.data.thickness = this.selThickness;
+          this.data.status = this.coilStatus
           if(this.selCompany) {
             let result = this.$store.state.companies.find(item => item.name.trim() == this.selCompany.trim())
             this.data.company = result.id
@@ -272,7 +293,7 @@ import thicknesses from '@/services/thicknesses';
           }  
         },
         async editCoil(){
-          this.data.status = "available"
+          this.data.status = this.coilStatus;
           this.data.date = `${this.selDate}`
           this.data.updated_at = this.$options.filters.calendarDate(new Date().toISOString())
           console.log("data", this.data)

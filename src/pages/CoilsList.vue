@@ -230,7 +230,7 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'Available' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' }, {id:4, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'ID',
@@ -282,6 +282,7 @@
                 if(item.status === 'available') 
                     actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}]
                 else if (item.status === 'slitted') actions = [{icon:'mdi-view-grid', text: 'preview planning'}]
+                else if (item.status === 'in-transit') actions = [{icon:'mdi-pencil', text: 'edit'},{icon:'mdi-check-circle', text: 'change to available'}, {icon:'mdi-delete', text: 'delete'}]
                 else actions = [{icon:'mdi-view-grid', text: 'preview planning'}, {icon:'mdi-pencil', text: 'edit planning'},]
                 return item.actions = actions
                 })
@@ -294,6 +295,9 @@
                 else return ''
             },
             actions(text, item) {
+                if(text === "change to available") {
+                    this.editCoil(item.id, {status: 'available', updated_at: this.$options.filters.calendarDate(new Date().toISOString())});
+                }
                 if(text === "delete") 
                     this.deleteCoil(item.id);
                 if(text === "edit") {
@@ -387,14 +391,16 @@
                 console.log("error",error)
                 }
             },
-            async editCoil(item){
+            async editCoil(id, data){
                 try {
-                const result = await coils.update(item.id, item);
+                const result = await coils.update(id, data);
                 this.$store.dispatch('getCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);
                 } catch (error) {
                 console.log("error",error)
+                } finally {
+                    this.$store.dispatch('getCoils', {page: 1});
                 }
             }
         }

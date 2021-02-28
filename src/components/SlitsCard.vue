@@ -43,7 +43,7 @@ import slittedCoils from '@/services/slittedCoils';
         selThickness: null,
         headers: [
           {
-            text: 'Slit No',
+            text: 'Coil No',
             sortable: false,
             filterable: false,
             value: 'slit_no',

@@ -3,7 +3,7 @@
         
         <v-row justify="space-between" class="my-3"> 
             <v-col cols="auto">
-                <h2 class=" font-weight-bold">Slits Stock</h2>
+                <h2 class=" font-weight-bold">HR Coil Slitted Stock</h2>
             </v-col>
             
             <v-col cols="auto" class="pb-0">
@@ -165,7 +165,7 @@
                 statusList: [{id:1, name: 'Available' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
                 headers: [
                 {
-                    text: 'Slit No',
+                    text: 'Coil No',
                     align: 'start',
                     value: 'slit_no',
                     sortable: false,
@@ -179,7 +179,7 @@
                 
                 // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
                 { text: 'Width (mm)', value: 'slitted_width', sortable: false, },
-                { text: 'Slit Date', value: 'slit_date', sortable: false, },]
+                { text: 'Slitting Date', value: 'slit_date', sortable: false, },]
                 // { text: 'Actions', value: 'actions', sortable: false, }],
        
             }

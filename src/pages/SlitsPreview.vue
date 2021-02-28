@@ -2,7 +2,7 @@
     <v-container fluid>
         <v-row justify="space-between" class="mt-3">
             <v-col>
-                <h2 class=" font-weight-bold">Slits Preview</h2>
+                <h2 class=" font-weight-bold">HR Slitting Planning Preview</h2>
             </v-col>
             <v-col>
                 <v-row justify="end">
@@ -138,7 +138,7 @@
         </v-data-table>
 
         <div id="checkMe" class="d-none"> 
-            <h2 class="my-3">Slits Stock</h2>
+            <h2 class="my-3">HR Coil Slitted Stock</h2>
             <table class="table table-bordered" >
                 <thead>
                     <tr>
@@ -167,7 +167,7 @@
                             <div v-for="slit in item.slits" :key="slit.id">
                                 <div class="row">
                                     <div class="col">
-                                    Slit No: {{slit.slit_no}}
+                                    Coil No: {{slit.slit_no}}
                                     </div>
                                     <div class="col">
                                     Width: {{slit.slitted_width}} mm
