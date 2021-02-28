@@ -101,12 +101,30 @@
             <template v-slot:[`item.slits`]="{item}">
                 <v-row class="body-2" v-for="slit in item.slits" :key="slit.id">
                     <!-- <v-col cols="4" class="py-0"> Slit No: {{slit.id}} </v-col> -->
-                    <v-col cols="6" class="py-0">
+                    <v-col v-if="slit.slit_no" cols="auto">{{slit.slit_no}}</v-col>
+                    <v-col>
+                        <v-row>
+                            <v-col cols="6" class="pb-0">
                         <span>Width: {{slit.slitted_width}} mm</span>
+                        <!-- <span v-if="slit.actual_width">Actual Width: {{slit.actual_width}} mm</span> -->
+                    </v-col>
+                    <v-col cols="6" class="pb-0">
+                        <span>Weight: {{slit.slitted_weight}} kg</span>
+                        <!-- <span v-if="slit.actual_weight">Actual Weight: {{slit.actual_weight}} kg</span> -->
+                    </v-col>
+                    
+                    <v-col cols="6" class="py-0">
+                        <!-- <span>Width: {{slit.slitted_width}} mm</span> -->
+                        <span v-if="slit.actual_width">Actual Width: {{slit.actual_width}} mm</span>
                     </v-col>
                     <v-col cols="6" class="py-0">
-                        <span>Weight: {{slit.slitted_weight}} kg</span>
+                        <!-- <span>Weight: {{slit.slitted_weight}} kg</span> -->
+                        <span v-if="slit.actual_weight">Actual Weight: {{slit.actual_weight}} kg</span>
                     </v-col>
+                    
+                        </v-row>
+                    </v-col>
+                    <v-col cols="12"><v-divider></v-divider></v-col>
                 </v-row>
                 
             </template>
@@ -128,10 +146,18 @@
                 </div>
             </template>
 
+            <template v-slot:[`item.status`]="{item}">
+                <div class="body-2"> 
+                    <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
+                </div>
+            </template>
+
             <template v-slot:[`item.actions`]="{item}">
                 <v-row align="center">
-                    <v-col @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Review & Complete</v-btn></v-col>
-                    <v-col @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Edit Planning</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
+                    <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined>View & Process</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-process'" @click="openDrawer(item)" cols="12"><v-btn small outlined>Mark Complete</v-btn></v-col>
                 </v-row>
         </template>
             
@@ -145,6 +171,7 @@
                         <th scope="col">Parent Coil ID</th>
                         <th scope="col">Parent Coil Size</th>
                         <th scope="col">Slits</th>
+                        <th scope="col">Status</th>
                         <!-- <th scope="col">Slits Size</th> -->
                     </tr>
                 </thead>
@@ -152,17 +179,13 @@
                     <tr v-for="item in selMultiRows" :key="item.name">
                         <td>{{item.brand_no}}</td>
                         <td>
-                        <div> 
+                            <div>
                                 <p class="mb-0">Width: {{item.width}} mm</p>
                                 <p class="mb-0">Weight: {{item.weight}} kg</p>
                                 <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                             </div> 
                         </td>
-                        <!-- <td>
-                            <div v-for="slit in item.slits" :key="slit.id">
-                                Slit No: {{slit.id}}
-                            </div>
-                        </td> -->
+                        
                         <td>
                             <div v-for="slit in item.slits" :key="slit.id">
                                 <div class="row">
@@ -175,7 +198,18 @@
                                     <div class="col">
                                     Weight: {{slit.slitted_weight}} kg
                                     </div>
+                                    <!-- <div class="col" v-if="slit.actual_width">
+                                    Actual Width: {{slit.actual_width}} mm
+                                    </div>
+                                    <div class="col" v-if="slit.actual_weight">
+                                    Actual Weight: {{slit.actual_weight}} kg
+                                    </div> -->
                                 </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                             </div>
                         </td>
                     </tr>
@@ -229,7 +263,7 @@
                 // { text: 'Od', value: 'od', sortable: false, },
                 // { text: 'Slit Shift', value: 'slit_shift', width:"10" },
                 // { text: 'Weight (kg)', value: 'slitted_weight' },
-                // { text: 'Width (mm)', value: 'slitted_width' },
+                { text: 'Status', value: 'status' },
                 { text: 'Actions', value: 'actions', sortable: false, }
                 ],
        
@@ -250,6 +284,7 @@
                         if(!existItem) { //parent coil doesn't exist 
                             let parentCoil = {
                                 id: coil.parent_id,
+                                status: coil.status,
                                 thickness: coil.thickness,
                                 width: coil.width,
                                 weight: coil.weight,
@@ -259,13 +294,13 @@
                                 company: coil.company,
                                 brand_no: coil.brand_no,
                                 slits: [
-                                    {id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width}
+                                    {id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width,actual_weight: coil.actual_weight, actual_width: coil.actual_width, slit_no: coil.slit_no}
                                 ]
                             }
                             slits.push(parentCoil)
                         }
                         else {
-                            existItem.slits.push({id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width}) 
+                            existItem.slits.push({id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width,actual_weight: coil.actual_weight, actual_width: coil.actual_width, slit_no: coil.slit_no}) 
                         }
                         
                         
@@ -290,6 +325,11 @@
             },
         },
         methods: {
+            checkRole(role_name) {
+                let user = JSON.parse(localStorage.getItem('user'))
+                if(user && user.role == role_name) return true
+                else return false 
+            },
             async resetCoil(item) {
                 console.log(item)
                 let data = {status: 'available', ids: '', updated_at: this.$options.filters.calendarDate(new Date().toISOString())}
@@ -364,7 +404,7 @@
                this.setOptions() 
             },
             searchData() {
-                let payload = { status: 'in-queue'}
+                let payload = { status: 'in-queue,in-process'}
                 const { page, itemsPerPage } = this.options
                 payload.sortBy =  this.sortBy
                 payload.orderBy =  this.orderBy

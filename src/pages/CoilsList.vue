@@ -230,7 +230,7 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' }, {id:4, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' },{id:4, name: 'In-Process' }, {id:5, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'ID',
@@ -271,7 +271,6 @@
         },
         computed: {
             preventSlitting() {
-                
                 let index = this.selMultiRows.findIndex(item => item.status.toLowerCase() != "available") 
                 if(index >=0) return true 
                 else return false

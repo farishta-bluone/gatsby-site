@@ -51,7 +51,7 @@
     },
     computed: {
       user() {
-        return JSON.parse(localStorage.getItem('user'))
+        return JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')) : {name: '', role: ''}
       },
     },
     methods: {
