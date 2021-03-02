@@ -247,31 +247,29 @@
                 headers: [
                 {
                     text: 'Parent Coil ID',
-                    // width:"10",
-                    // align: 'start',
+                    width:"15%",
+                    align: 'start',
                     value: 'brand_no',
                 },
                 {
                     text: 'Parent Coil Size',
-                    // width:"10",
-                    // align: 'start',
+                    width:"15%",
+                    align: 'start',
                     value: 'parent_size',
                 },
-                { text: 'Slits', value: 'slits', sortable: false, },
-                // { text: 'Slits Size', value: 'slits_size', sortable: false,width:"30", },
-                // { text: 'Slit Date', value: 'slit_date' , width:"10",},
-                // { text: 'Od', value: 'od', sortable: false, },
-                // { text: 'Slit Shift', value: 'slit_shift', width:"10" },
-                // { text: 'Weight (kg)', value: 'slitted_weight' },
-                { text: 'Status', value: 'status' },
-                { text: 'Actions', value: 'actions', sortable: false, }
+                { text: 'Slits', value: 'slits', width:"40%", sortable: false, },
+                { text: 'Status', value: 'status', width:"10%", },
+                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"20%",}
                 ],
        
             }
         },
         mounted() {
-            this.$store.dispatch('getShifts');
-            // this.getCoils();
+            let access = JSON.parse(localStorage.getItem('user')).access
+            if(access && access.slits_preview) {
+                this.$store.dispatch('getShifts');
+            }
+            else this.$router.push({name: 'forbidden'})
         },
         computed: {
             orderedData() {

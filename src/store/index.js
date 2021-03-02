@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userInfo: {},
+    userInfo: {name: "", role: ""},
     users: [],
     slitCards: [{id:1, thickness: null, slittedCoils: []}],
     thicknessList: [],
@@ -37,10 +37,9 @@ export default new Vuex.Store({
     companies: [],
   },
   mutations: {
-      checkPageAccess(state,name) {
-        const access = JSON.parse(localStorage.getItem('privileges'))
-        return access[`${name}`]
-      }
+    SET_USER_INFO: (state, newValue) => {
+      state.userInfo = newValue
+    }
   },
   actions: {
     getSlittedCoils({state}, payload) {
@@ -67,9 +66,8 @@ export default new Vuex.Store({
         .then((res) => {
           if(payload.id) { //for single user
             state.userInfo = res.data.rows[0]
-            const {name, id, role} = state.userInfo
-            localStorage.setItem('user', JSON.stringify({name, id, role}))
-            localStorage.setItem('privileges', JSON.stringify(state.userInfo.access))
+            const {name, id, role, access} = state.userInfo
+            localStorage.setItem('user', JSON.stringify({name, id, role, access}))
           } else state.users = res.data.rows
         
         })

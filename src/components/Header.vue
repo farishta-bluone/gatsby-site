@@ -19,8 +19,8 @@
 
       <v-spacer></v-spacer>
 
-      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{user.name}}</span>
-      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{user.role}}</span>
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.name}}</span>
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.role}}</span>
     
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
@@ -49,11 +49,6 @@
 
       }
     },
-    computed: {
-      user() {
-        return JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')) : {name: '', role: ''}
-      },
-    },
     methods: {
       showMenu() {
       this.$store.state.menu = true
@@ -62,7 +57,6 @@
     logout () {
       // this.$store.state.logout = true
       this.$store.state.miniMenu = true
-      localStorage.removeItem('privileges');
       localStorage.removeItem('user');
       localStorage.removeItem('access_token');
       this.$router.push({path: '/login'})

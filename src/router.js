@@ -15,7 +15,7 @@ const router = new Router ({
       },
 
     routes: [
-        { path: '/', redirect: { name: "login" }},
+        { path: '/', redirect: { name: "hr_stock" }},
 
         {
             path: "/login",
@@ -79,16 +79,16 @@ const router = new Router ({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('access_token')
-  const access = JSON.parse(localStorage.getItem('privileges'))
+  // const access = JSON.parse(localStorage.getItem('user')) ? JSON.parse(localStorage.getItem('user')).access : {}
   
   if (to.name !== 'login' && !token) next({ name: 'login' })
   
   else {
-    if (to.name === 'login' && token) next(false)
+    if (to.name === 'login' && token) next({name: 'hr_stock'})
     else {
-      console.log("checkkk", access, to.name)
-      if(access && access[`${to.name}`] == false) next({name: "forbidden"})
-      else next()
+      // if(access && access[`${to.name}`] == false) next({name: "forbidden"})
+      // else next()
+      next()
     }
   }
 })

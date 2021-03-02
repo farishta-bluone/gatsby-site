@@ -251,9 +251,14 @@
             }
         },
         mounted() {
-            this.$store.dispatch('getCompanies');
-            this.$store.dispatch('getShifts');
-            this.$store.dispatch('getThicknesses');
+            let access = JSON.parse(localStorage.getItem('user')).access
+            if(access && access.hr_stock) {
+                this.$store.dispatch('getCompanies');
+                this.$store.dispatch('getShifts');
+                this.$store.dispatch('getThicknesses');
+            }
+            else this.$router.push({name: 'forbidden'})
+            
         },
         watch: {
             options: {

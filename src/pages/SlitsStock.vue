@@ -185,8 +185,12 @@
             }
         },
         mounted() {
-            this.$store.dispatch('getSlittedCoils', {status: "slitted"});
-            this.$store.dispatch('getThicknesses');
+            let access = JSON.parse(localStorage.getItem('user')).access
+            if(access && access.slits_stock) {
+                this.$store.dispatch('getSlittedCoils', {status: "slitted"});
+                this.$store.dispatch('getThicknesses');
+            }
+            else this.$router.push({name: 'forbidden'}) 
         },
         watch: {
             options: {

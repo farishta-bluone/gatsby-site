@@ -1,6 +1,5 @@
 <template>
     <v-container>
-        
         <v-row justify="space-between" class="my-3"> 
             <v-col cols="auto">
                 <h2 class=" font-weight-bold">Users</h2>
@@ -182,7 +181,6 @@
     import users from '@/services/users';
     export default {
         components: {
-           
         },
         data () {
             return {
@@ -208,7 +206,10 @@
             }
         },
         mounted() {
-            this.$store.dispatch('getUsers');
+            let access = JSON.parse(localStorage.getItem('user')).access
+            if(access && access.users)
+                this.$store.dispatch('getUsers')
+            else this.$router.push({name: 'forbidden'})
         },
         watch: {
             

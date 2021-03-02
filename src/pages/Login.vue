@@ -110,8 +110,7 @@ export default {
         localStorage.setItem('access_token', data.token)
         this.$store.state.userInfo = user;
         
-        localStorage.setItem('privileges', JSON.stringify(user.access))
-        localStorage.setItem('user', JSON.stringify({name: user.name, id: user.id, role: user.role}))
+        localStorage.setItem('user', JSON.stringify({name: user.name, id: user.id, role: user.role, access: user.access}))
         // this.$store.dispatch('user/getProfile')
         this.errorMsg = ''
         this.$router.push({path: '/coils'})
