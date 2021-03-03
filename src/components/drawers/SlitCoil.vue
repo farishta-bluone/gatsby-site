@@ -104,7 +104,7 @@
                   :readonly="!editFlag('width')"
                 />
               </v-col>
-              <v-col class="py-0" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'in-process') || item.status == 'slitted')">
+              <v-col class="py-0" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval') || item.status == 'slitted')">
                 <v-text-field
                   v-model="item.actual_weight"
                   label="Actual Weight (kg)"
@@ -115,7 +115,7 @@
                   :readonly="!editFlag('actual_weight')"
                 />
               </v-col>
-              <v-col  class="py-0 pl-2" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'in-process' || item.status == 'slitted'))">
+              <v-col  class="py-0 pl-2" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval' || item.status == 'slitted'))">
                 <v-text-field
                   v-model="item.actual_width"
                   label="Actual Width (mm)"
@@ -218,8 +218,8 @@ import coils from '@/services/coils';
         else this.errorMsg = ''
         let status = this.rows[0].status;
         if(this.checkRole('admin') && status == "in-queue") status = "in-queue"
-        if(this.checkRole('member') && status == "in-queue") status = "in-process"
-        if(this.checkRole('admin') && status == "in-process") status = "slitted"
+        if(this.checkRole('member') && status == "in-queue") status = "require approval"
+        if(this.checkRole('admin') && status == "require approval") status = "slitted"
         let data = {slittedItems: [], status: status, updated_at: this.$options.filters.calendarDate(new Date().toISOString())}
         this.rows.map(item => {
           data.slittedItems.push({ID: item.ID, slit_no: item.slit_no, status: status, actual_weight: item.actual_weight, actual_width: item.actual_width, slitted_weight: item.slitted_weight, slitted_width: item.slitted_width})
@@ -233,7 +233,7 @@ import coils from '@/services/coils';
             console.log("error",error)
           }
           finally {
-            let payload = {status: "in-queue,in-process"} //it can change
+            let payload = {status: "in-queue,require approval"} //it can change
             if(this.$store.state.previewShift) payload.slit_shift = this.$store.state.previewShift
             if(this.$store.state.previewDate) payload.slit_date = this.$store.state.previewDate
             this.$store.state.slitDrawer = false

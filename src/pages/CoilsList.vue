@@ -230,7 +230,7 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' },{id:4, name: 'In-Process' }, {id:5, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' },{id:4, name: 'Require Approval' }, {id:5, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'ID',

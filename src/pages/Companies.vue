@@ -79,7 +79,7 @@
             class="elevation-1 coils mt-3"
             :loading="$store.state.isLoading"
             fixed-header
-            height="calc(100vh - 270px)"
+            height="calc(100vh - 210px)"
             disable-pagination
         >
             <template v-slot:[`item.actions`]="{ item }">

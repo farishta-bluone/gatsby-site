@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
         <v-row justify="space-between" class="mt-3">
-            <v-col>
+            <v-col cols="8" sm="6" lg="4" md="5">
                 <h2 class=" font-weight-bold">HR Slitting Planning Preview</h2>
             </v-col>
             <v-col>
@@ -57,6 +57,25 @@
                         @input="setOptions"
                         clearable
                         @click:clear="clearSearch('shift')"
+                        class="select-box"
+                        ></v-select>
+                    </v-col>
+                    <v-col
+                        class="d-flex"
+                        cols="auto"
+                    >
+                        <v-select
+                        outlined
+                        dense
+                        v-model="selStatus"
+                        :items="statusList"
+                        label="Select Coil Status"
+                        item-text="name"
+                        item-value="name"
+                        color="grey"
+                        @input="setOptions"
+                        clearable
+                        @click:clear="clearSearch('status')"
                         class="select-box"
                         ></v-select>
                     </v-col>
@@ -157,7 +176,7 @@
                     <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Edit Planning</v-btn></v-col>
                     <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
                     <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined>View & Process</v-btn></v-col>
-                    <v-col v-if="checkRole('admin') && item.status === 'in-process'" @click="openDrawer(item)" cols="12"><v-btn small outlined>Mark Complete</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'require approval'" @click="openDrawer(item)" cols="12"><v-btn small outlined>Mark Complete</v-btn></v-col>
                 </v-row>
         </template>
             
@@ -232,6 +251,8 @@
         },
         data () {
             return {
+                statusList: [{id:1, name: 'In-Queue' },{id:2, name: 'Require Approval' }],
+                selStatus: null,
                 selMultiRows: [],
                 singleSelect: false,
                 actionsList: [{icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}],
@@ -239,11 +260,9 @@
                 sortBy: '',
                 orderBy: 'desc',
                 selCompany: null,
-                selStatus: null,
                 menu: false,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'Avilable' },{id:2, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'Parent Coil ID',
@@ -258,8 +277,8 @@
                     value: 'parent_size',
                 },
                 { text: 'Slits', value: 'slits', width:"40%", sortable: false, },
-                { text: 'Status', value: 'status', width:"10%", },
-                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"20%",}
+                { text: 'Status', value: 'status', width:"15%", },
+                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"15%",}
                 ],
        
             }
@@ -402,13 +421,13 @@
                this.setOptions() 
             },
             searchData() {
-                let payload = { status: 'in-queue,in-process'}
+                let payload = { status: 'in-queue,require approval'}
                 const { page, itemsPerPage } = this.options
                 payload.sortBy =  this.sortBy
                 payload.orderBy =  this.orderBy
                 payload.page = page
                 payload.limit =  itemsPerPage
-                // if(this.selCompany) payload.company = this.selCompany
+                if(this.selStatus) payload.status = this.selStatus
                 if(this.$store.state.previewShift) payload.slit_shift = this.$store.state.previewShift
                 if(this.$store.state.previewDate) payload.slit_date = this.$store.state.previewDate
                 this.$store.dispatch('getSlittedCoils', payload);
