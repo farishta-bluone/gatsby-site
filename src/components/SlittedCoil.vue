@@ -1,6 +1,6 @@
 <template>
     <v-container fluid class="my-5">
-        <v-expansion-panels>
+        <v-expansion-panels v-model="panel">
             <v-expansion-panel>
                 <v-expansion-panel-header>
                     <template>
@@ -158,6 +158,7 @@
 import coils from "@/services/coils";
   export default {
     data: () => ({
+        panel: 0,
         shift: '',
         rule:true,
         data:{},

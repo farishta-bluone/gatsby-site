@@ -89,7 +89,7 @@
             v-model="selMultiRows"
             :headers="headers"
             :items="orderedData"
-            class="elevation-1 coils"
+            class="elevation-1 coils slittedCoils"
             :loading="$store.state.isLoading"
             :footer-props="{
             'items-per-page-options': [5, 10, 25, 50, 100]
@@ -104,13 +104,13 @@
             hide-default-footer
         >
             <template v-slot:[`item.slit_date`]="{item}">
-                <div class="body-2"> 
+                <div class="caption"> 
                     <span>{{ item.slit_date ? $options.filters.formatDate(item.slit_date) : '---'}}</span>
                 </div>
             </template>
 
             <template v-slot:[`item.parent_size`]="{item}">
-                <div class="body-2"> 
+                <div class="caption"> 
                     <p class="mb-0">Width: {{item.width}} mm</p>
                     <p class="mb-0">Weight: {{item.weight}} kg</p>
                     <p class="mb-0">Thickness: {{item.thickness}} mm</p>
@@ -118,7 +118,7 @@
             </template>
 
             <template v-slot:[`item.slits`]="{item}">
-                <v-row class="body-2" v-for="slit in item.slits" :key="slit.id">
+                <v-row class="caption" v-for="slit in item.slits" :key="slit.id">
                     <!-- <v-col cols="4" class="py-0"> Slit No: {{slit.id}} </v-col> -->
                     <v-col v-if="slit.slit_no" cols="auto">{{slit.slit_no}}</v-col>
                     <v-col>
@@ -160,23 +160,23 @@
             </template> -->
 
             <template v-slot:[`item.slit_shift`]="{item}">
-                <div class="body-2"> 
-                    {{item.slit_shift ? getShiftName : '24 Hour Shift'}}
+                <div class="caption"> 
+                    {{item.slit_shift ? getShiftName(item.slit_shift) : '24 Hour Shift'}}
                 </div>
             </template>
 
             <template v-slot:[`item.status`]="{item}">
-                <div class="body-2"> 
+                <div class="caption"> 
                     <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                 </div>
             </template>
 
             <template v-slot:[`item.actions`]="{item}">
                 <v-row align="center">
-                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Edit Planning</v-btn></v-col>
-                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
-                    <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined>View & Process</v-btn></v-col>
-                    <v-col v-if="checkRole('admin') && item.status === 'require approval'" @click="openDrawer(item)" cols="12"><v-btn small outlined>Mark Complete</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined class="caption">Edit Planning</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined class="caption">Reset to Available</v-btn></v-col>
+                    <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">View & Process</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'require approval'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">Mark Complete</v-btn></v-col>
                 </v-row>
         </template>
             
@@ -276,9 +276,11 @@
                     align: 'start',
                     value: 'parent_size',
                 },
-                { text: 'Slits', value: 'slits', width:"40%", sortable: false, },
-                { text: 'Status', value: 'status', width:"15%", },
-                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"15%",}
+                { text: 'Slits', value: 'slits', width:"35%", sortable: false, },
+                { text: 'Slit Date', value: 'slit_date', width:"10%", sortable: false, },
+                { text: 'Shift', value: 'slit_shift', width:"7%", sortable: false, },
+                { text: 'Status', value: 'status', width:"8%", },
+                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"10%",}
                 ],
        
             }
@@ -342,6 +344,11 @@
             },
         },
         methods: {
+            getShiftName(shift) {
+                if(shift === 1) return 'Day Shift'
+                else if(shift === 2) return 'Night Shift'
+                else return '24 Hour Shift'
+            },
             checkRole(role_name) {
                 let user = JSON.parse(localStorage.getItem('user'))
                 if(user && user.role == role_name) return true
@@ -460,12 +467,15 @@
 
 
 <style>
-.v-data-table.coils>.v-data-table__wrapper>table>thead>tr>th {
-  font-size: 16px !important;
+.v-data-table.slittedCoils>.v-data-table__wrapper>table>thead>tr>th {
+  font-size: 14px !important;
   color: black !important;
 }
 .v-data-table.coils>.v-data-table__wrapper>table>tbody>tr>td {
   padding: 10px 15px ;
+}
+.v-data-table.slittedCoils>.v-data-table__wrapper>table>tbody>tr>td {
+  font-size: 12px !important;
 }
 /* .v-data-table.coils>.v-data-table__wrapper>table>tbody>th {
   padding: 10px 10px ;

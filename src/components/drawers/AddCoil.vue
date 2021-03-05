@@ -211,17 +211,17 @@ import thicknesses from '@/services/thicknesses';
     },
     mounted() {
         if(this.$store.state.coilId) {
-          let coilData = this.$store.state.coilData
+          let coilData = Object.assign({} , this.$store.state.coilData);
           let date = this.$options.filters.calendarDate(coilData.date).split(" ");
           let result = this.$store.state.companies.find(item => item.id == coilData.company)
           this.selCompany = result.name
 
-          const {brand_no, width, weight, formulated_weight} = coilData;
+          const {brand_no, width, weight, formulated_weight, status} = coilData;
           this.selDate = date[0];
           this.selThickness = coilData.thickness;
           this.coilStatus = coilData.status;
           // this.time = date[1].split(":")[0] + ':' + date[1].split(":")[1]
-          this.data = {brand_no, width, weight, formulated_weight};
+          this.data = {brand_no, width, weight, formulated_weight, status};
           
         } else this.data = {}
     },
@@ -269,6 +269,10 @@ import thicknesses from '@/services/thicknesses';
             }
         },
         async addCoil(){
+          let tempStatus = this.data.status
+          if(tempStatus === "in-transit" && this.coilStatus === "available") {
+            this.selDate = this.$options.filters.calendarDate(new Date().toISOString())
+          }
           this.data.thickness = this.selThickness;
           this.data.status = this.coilStatus
           if(this.selCompany) {

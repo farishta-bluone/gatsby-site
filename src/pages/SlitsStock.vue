@@ -175,10 +175,10 @@
                 // { text: 'Status', value: 'status', sortable: false, },
                 // { text: 'OD (mm)', value: 'od' },
                 { text: 'Thickness (mm)', value: 'thickness', sortable: false, },
-                { text: 'Weight (kg)', value: 'slitted_weight', sortable: false, },
+                { text: 'Weight (kg)', value: 'actual_weight', sortable: false, },
                 
                 // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
-                { text: 'Width (mm)', value: 'slitted_width', sortable: false, },
+                { text: 'Width (mm)', value: 'actual_width', sortable: false, },
                 { text: 'Slitting Date', value: 'slit_date', sortable: false, },]
                 // { text: 'Actions', value: 'actions', sortable: false, }],
        

@@ -300,7 +300,8 @@
             },
             actions(text, item) {
                 if(text === "change to available") {
-                    this.editCoil(item.id, {status: 'available', updated_at: this.$options.filters.calendarDate(new Date().toISOString())});
+                    let currentDate = this.$options.filters.calendarDate(new Date().toISOString())
+                    this.editCoil(item.id, {status: 'available', updated_at: currentDate, date: currentDate});
                 }
                 if(text === "delete") 
                     this.deleteCoil(item.id);
