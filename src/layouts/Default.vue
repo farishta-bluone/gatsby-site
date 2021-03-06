@@ -4,8 +4,8 @@
             <Header />
             </div>
         <Menu />
-        <div class="mx-7 pl-12" >
-            <slot  />
+        <div class="mx-7 pl-12" @click="$store.state.miniMenu = true">
+            <slot />
             </div>
     </div>
 </template>

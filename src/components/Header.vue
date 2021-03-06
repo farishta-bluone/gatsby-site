@@ -19,7 +19,8 @@
 
       <v-spacer></v-spacer>
 
-      <span class="subtitle-1 font-weight-bold mx-3">Farishta Sharma</span>
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.name}}</span>
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.role}}</span>
     
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
@@ -34,7 +35,7 @@
       <v-btn icon>
         <v-icon>mdi-login</v-icon>
       </v-btn>
-      <div style="cursor: pointer">Logout</div>
+      <div @click="logout" style="cursor: pointer">Logout</div>
     </v-app-bar>
   </div>
 </template>
@@ -52,7 +53,14 @@
       showMenu() {
       this.$store.state.menu = true
       this.$store.state.miniMenu = !this.$store.state.miniMenu
-    }
+    },
+    logout () {
+      // this.$store.state.logout = true
+      this.$store.state.miniMenu = true
+      localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      this.$router.push({path: '/login'})
+    },
     }
   }
 </script>

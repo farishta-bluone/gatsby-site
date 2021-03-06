@@ -1,8 +1,8 @@
 <template>
     <v-container fluid>
         <v-row justify="space-between" class="mt-3">
-            <v-col>
-                <h2 class=" font-weight-bold">Slits Preview</h2>
+            <v-col cols="8" sm="6" lg="4" md="5">
+                <h2 class=" font-weight-bold">HR Slitting Planning Preview</h2>
             </v-col>
             <v-col>
                 <v-row justify="end">
@@ -60,6 +60,25 @@
                         class="select-box"
                         ></v-select>
                     </v-col>
+                    <v-col
+                        class="d-flex"
+                        cols="auto"
+                    >
+                        <v-select
+                        outlined
+                        dense
+                        v-model="selStatus"
+                        :items="statusList"
+                        label="Select Coil Status"
+                        item-text="name"
+                        item-value="name"
+                        color="grey"
+                        @input="setOptions"
+                        clearable
+                        @click:clear="clearSearch('status')"
+                        class="select-box"
+                        ></v-select>
+                    </v-col>
                     <v-col cols="auto" v-if="selMultiRows.length > 0">
                         <v-btn dark @click="downloadPdf">Download PDF</v-btn>
                     </v-col>
@@ -70,8 +89,7 @@
             v-model="selMultiRows"
             :headers="headers"
             :items="orderedData"
-            :items-per-page="10"
-            class="elevation-1 coils"
+            class="elevation-1 coils slittedCoils"
             :loading="$store.state.isLoading"
             :footer-props="{
             'items-per-page-options': [5, 10, 25, 50, 100]
@@ -79,35 +97,53 @@
             fixed-header
             height="calc(100vh - 190px)"
             :options.sync="options"
-            :server-items-length="2"
+            disable-pagination
             id="pdf"
             :single-select="singleSelect"
             show-select
             hide-default-footer
         >
             <template v-slot:[`item.slit_date`]="{item}">
-                <div class="body-2"> 
+                <div class="caption"> 
                     <span>{{ item.slit_date ? $options.filters.formatDate(item.slit_date) : '---'}}</span>
                 </div>
             </template>
 
             <template v-slot:[`item.parent_size`]="{item}">
-                <div class="body-2"> 
+                <div class="caption"> 
                     <p class="mb-0">Width: {{item.width}} mm</p>
-                    <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                     <p class="mb-0">Weight: {{item.weight}} kg</p>
+                    <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                 </div>
             </template>
 
             <template v-slot:[`item.slits`]="{item}">
-                <v-row class="body-2" v-for="slit in item.slits" :key="slit.id">
+                <v-row class="caption" v-for="slit in item.slits" :key="slit.id">
                     <!-- <v-col cols="4" class="py-0"> Slit No: {{slit.id}} </v-col> -->
-                    <v-col cols="6" class="py-0">
+                    <v-col v-if="slit.slit_no" cols="auto">{{slit.slit_no}}</v-col>
+                    <v-col>
+                        <v-row>
+                            <v-col cols="6" class="pb-0">
                         <span>Width: {{slit.slitted_width}} mm</span>
+                        <!-- <span v-if="slit.actual_width">Actual Width: {{slit.actual_width}} mm</span> -->
+                    </v-col>
+                    <v-col cols="6" class="pb-0">
+                        <span>Weight: {{slit.slitted_weight}} kg</span>
+                        <!-- <span v-if="slit.actual_weight">Actual Weight: {{slit.actual_weight}} kg</span> -->
+                    </v-col>
+                    
+                    <v-col cols="6" class="py-0">
+                        <!-- <span>Width: {{slit.slitted_width}} mm</span> -->
+                        <span v-if="slit.actual_width">Actual Width: {{slit.actual_width}} mm</span>
                     </v-col>
                     <v-col cols="6" class="py-0">
-                        <span>Weight: {{slit.slitted_weight}} kg</span>
+                        <!-- <span>Weight: {{slit.slitted_weight}} kg</span> -->
+                        <span v-if="slit.actual_weight">Actual Weight: {{slit.actual_weight}} kg</span>
                     </v-col>
+                    
+                        </v-row>
+                    </v-col>
+                    <v-col cols="12"><v-divider></v-divider></v-col>
                 </v-row>
                 
             </template>
@@ -124,60 +160,37 @@
             </template> -->
 
             <template v-slot:[`item.slit_shift`]="{item}">
-                <div class="body-2"> 
-                    {{item.slit_shift ? getShiftName : '24 Hour Shift'}}
+                <div class="caption"> 
+                    {{item.slit_shift ? getShiftName(item.slit_shift) : '24 Hour Shift'}}
+                </div>
+            </template>
+
+            <template v-slot:[`item.status`]="{item}">
+                <div class="caption"> 
+                    <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                 </div>
             </template>
 
             <template v-slot:[`item.actions`]="{item}">
                 <v-row align="center">
-                    <v-col @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined>Review & Complete</v-btn></v-col>
-                    <v-col @click="resetCoil(item)" cols="12"><v-btn small outlined>Reset to Available</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined class="caption">Edit Planning</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined class="caption">Reset to Available</v-btn></v-col>
+                    <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">View & Process</v-btn></v-col>
+                    <v-col v-if="checkRole('admin') && item.status === 'require approval'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">Mark Complete</v-btn></v-col>
                 </v-row>
-                
-                <!-- <v-menu>
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                        
-                    >
-                        <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                    </template>
-
-                    <v-list dense>
-                    <v-list-item
-                        v-for="(val) in actionsList"
-                        :key="val.text"
-                        @click="actions(val.text, item)"
-                    >
-                        <v-list-item-icon class="mr-0">
-                        <v-icon
-                            class="mt-1"
-                            small
-                            v-text="val.icon"
-                        />
-                        </v-list-item-icon>
-                        <v-list-item-title class="body-2 text-capitalize mt-1">
-                        {{ val.text }}
-                        </v-list-item-title>
-                    </v-list-item>
-                    </v-list>
-                </v-menu> -->
         </template>
             
         </v-data-table>
 
         <div id="checkMe" class="d-none"> 
-            <h2 class="my-3">Slits Stock</h2>
+            <h2 class="my-3">HR Coil Slitted Stock</h2>
             <table class="table table-bordered" >
                 <thead>
                     <tr>
                         <th scope="col">Parent Coil ID</th>
                         <th scope="col">Parent Coil Size</th>
                         <th scope="col">Slits</th>
+                        <th scope="col">Status</th>
                         <!-- <th scope="col">Slits Size</th> -->
                     </tr>
                 </thead>
@@ -185,22 +198,18 @@
                     <tr v-for="item in selMultiRows" :key="item.name">
                         <td>{{item.brand_no}}</td>
                         <td>
-                        <div> 
+                            <div>
                                 <p class="mb-0">Width: {{item.width}} mm</p>
-                                <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                                 <p class="mb-0">Weight: {{item.weight}} kg</p>
+                                <p class="mb-0">Thickness: {{item.thickness}} mm</p>
                             </div> 
                         </td>
-                        <!-- <td>
-                            <div v-for="slit in item.slits" :key="slit.id">
-                                Slit No: {{slit.id}}
-                            </div>
-                        </td> -->
+                        
                         <td>
                             <div v-for="slit in item.slits" :key="slit.id">
                                 <div class="row">
                                     <div class="col">
-                                    Slit No: {{slit.slit_no}}
+                                    Coil No: {{slit.slit_no}}
                                     </div>
                                     <div class="col">
                                     Width: {{slit.slitted_width}} mm
@@ -208,7 +217,18 @@
                                     <div class="col">
                                     Weight: {{slit.slitted_weight}} kg
                                     </div>
+                                    <!-- <div class="col" v-if="slit.actual_width">
+                                    Actual Width: {{slit.actual_width}} mm
+                                    </div>
+                                    <div class="col" v-if="slit.actual_weight">
+                                    Actual Weight: {{slit.actual_weight}} kg
+                                    </div> -->
                                 </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                <span :class="getTextColor(item.status)" class="text-capitalize">{{ item.status }}</span>
                             </div>
                         </td>
                     </tr>
@@ -231,6 +251,8 @@
         },
         data () {
             return {
+                statusList: [{id:1, name: 'In-Queue' },{id:2, name: 'Require Approval' }],
+                selStatus: null,
                 selMultiRows: [],
                 singleSelect: false,
                 actionsList: [{icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}],
@@ -238,39 +260,37 @@
                 sortBy: '',
                 orderBy: 'desc',
                 selCompany: null,
-                selStatus: null,
                 menu: false,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'Avilable' },{id:2, name: 'Slitted' } ],
                 headers: [
                 {
                     text: 'Parent Coil ID',
-                    // width:"10",
-                    // align: 'start',
+                    width:"15%",
+                    align: 'start',
                     value: 'brand_no',
                 },
                 {
                     text: 'Parent Coil Size',
-                    // width:"10",
-                    // align: 'start',
+                    width:"15%",
+                    align: 'start',
                     value: 'parent_size',
                 },
-                { text: 'Slits', value: 'slits', sortable: false, },
-                // { text: 'Slits Size', value: 'slits_size', sortable: false,width:"30", },
-                // { text: 'Slit Date', value: 'slit_date' , width:"10",},
-                // { text: 'Od', value: 'od', sortable: false, },
-                // { text: 'Slit Shift', value: 'slit_shift', width:"10" },
-                // { text: 'Weight (kg)', value: 'slitted_weight' },
-                // { text: 'Width (mm)', value: 'slitted_width' },
-                { text: 'Actions', value: 'actions', sortable: false, }
+                { text: 'Slits', value: 'slits', width:"35%", sortable: false, },
+                { text: 'Slit Date', value: 'slit_date', width:"10%", sortable: false, },
+                { text: 'Shift', value: 'slit_shift', width:"7%", sortable: false, },
+                { text: 'Status', value: 'status', width:"8%", },
+                { text: 'Actions', value: 'actions', sortable: false, align: 'end',width:"10%",}
                 ],
        
             }
         },
         mounted() {
-            this.$store.dispatch('getShifts');
-            // this.getCoils();
+            let access = JSON.parse(localStorage.getItem('user')).access
+            if(access && access.slits_preview) {
+                this.$store.dispatch('getShifts');
+            }
+            else this.$router.push({name: 'forbidden'})
         },
         computed: {
             orderedData() {
@@ -283,6 +303,7 @@
                         if(!existItem) { //parent coil doesn't exist 
                             let parentCoil = {
                                 id: coil.parent_id,
+                                status: coil.status,
                                 thickness: coil.thickness,
                                 width: coil.width,
                                 weight: coil.weight,
@@ -292,13 +313,13 @@
                                 company: coil.company,
                                 brand_no: coil.brand_no,
                                 slits: [
-                                    {id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width}
+                                    {id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width,actual_weight: coil.actual_weight, actual_width: coil.actual_width, slit_no: coil.slit_no}
                                 ]
                             }
                             slits.push(parentCoil)
                         }
                         else {
-                            existItem.slits.push({id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width}) 
+                            existItem.slits.push({id: coil.ID, slitted_weight: coil.slitted_weight, slitted_width: coil.slitted_width,actual_weight: coil.actual_weight, actual_width: coil.actual_width, slit_no: coil.slit_no}) 
                         }
                         
                         
@@ -323,6 +344,16 @@
             },
         },
         methods: {
+            getShiftName(shift) {
+                if(shift === 1) return 'Day Shift'
+                else if(shift === 2) return 'Night Shift'
+                else return '24 Hour Shift'
+            },
+            checkRole(role_name) {
+                let user = JSON.parse(localStorage.getItem('user'))
+                if(user && user.role == role_name) return true
+                else return false 
+            },
             async resetCoil(item) {
                 console.log(item)
                 let data = {status: 'available', ids: '', updated_at: this.$options.filters.calendarDate(new Date().toISOString())}
@@ -397,13 +428,13 @@
                this.setOptions() 
             },
             searchData() {
-                let payload = { status: 'in-queue'}
+                let payload = { status: 'in-queue,require approval'}
                 const { page, itemsPerPage } = this.options
                 payload.sortBy =  this.sortBy
                 payload.orderBy =  this.orderBy
                 payload.page = page
                 payload.limit =  itemsPerPage
-                // if(this.selCompany) payload.company = this.selCompany
+                if(this.selStatus) payload.status = this.selStatus
                 if(this.$store.state.previewShift) payload.slit_shift = this.$store.state.previewShift
                 if(this.$store.state.previewDate) payload.slit_date = this.$store.state.previewDate
                 this.$store.dispatch('getSlittedCoils', payload);
@@ -436,12 +467,15 @@
 
 
 <style>
-.v-data-table.coils>.v-data-table__wrapper>table>thead>tr>th {
-  font-size: 16px !important;
+.v-data-table.slittedCoils>.v-data-table__wrapper>table>thead>tr>th {
+  font-size: 14px !important;
   color: black !important;
 }
 .v-data-table.coils>.v-data-table__wrapper>table>tbody>tr>td {
   padding: 10px 15px ;
+}
+.v-data-table.slittedCoils>.v-data-table__wrapper>table>tbody>tr>td {
+  font-size: 12px !important;
 }
 /* .v-data-table.coils>.v-data-table__wrapper>table>tbody>th {
   padding: 10px 10px ;

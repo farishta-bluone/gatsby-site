@@ -1,10 +1,10 @@
 import httpClient from './httpClient';
 
-const END_POINT = '/slits';
+const END_POINT = '/thicknesses';
 
 export default {
-    get(payload) {
-        return httpClient.get(`${END_POINT}`, {params: payload})
+    get() {
+        return httpClient.get(`${END_POINT}`)
     },
     add(params) {
         return httpClient.post(`${END_POINT}`,params)
@@ -13,8 +13,6 @@ export default {
         return httpClient.delete(`${END_POINT}/${id}`)
     },
     update(id, params) {
-        // let newIds = ids.join()
         return httpClient.put(`${END_POINT}/${id}`, params)
-    }
-    
+    },
 }

@@ -23,6 +23,11 @@ export default {
       return (this.$route.meta.layout || default_layout) + '-layout';
     }
   },
+  mounted() {
+    if(localStorage.getItem('access_token') && localStorage.getItem('user')) {
+      this.$store.dispatch('getUsers',{id: JSON.parse(localStorage.getItem('user')).id})
+    }
+  },
 
   data: () => ({
     //

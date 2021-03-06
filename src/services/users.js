@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 
-const END_POINT = '/slits';
+const END_POINT = '/users';
 
 export default {
     get(payload) {
@@ -13,8 +13,6 @@ export default {
         return httpClient.delete(`${END_POINT}/${id}`)
     },
     update(id, params) {
-        // let newIds = ids.join()
         return httpClient.put(`${END_POINT}/${id}`, params)
-    }
-    
+    },
 }

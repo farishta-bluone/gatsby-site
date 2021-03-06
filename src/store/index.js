@@ -6,11 +6,17 @@ import coils from '@/services/coils';
 import companies from '@/services/companies';
 import shifts from '@/services/shifts';
 import slittedCoils from '@/services/slittedCoils';
+import thicknesses from '@/services/thicknesses';
+import users from '@/services/users';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userInfo: {name: "", role: ""},
+    users: [],
+    slitCards: [{id:1, thickness: null, slittedCoils: []}],
+    thicknessList: [],
     previewShift: null,
     previewDate: null,
     miniMenu: true,
@@ -31,7 +37,9 @@ export default new Vuex.Store({
     companies: [],
   },
   mutations: {
-      
+    SET_USER_INFO: (state, newValue) => {
+      state.userInfo = newValue
+    }
   },
   actions: {
     getSlittedCoils({state}, payload) {
@@ -49,6 +57,26 @@ export default new Vuex.Store({
       return companies.get()
         .then((res) => {
           state.companies = res.data.rows
+        })
+        .catch((error) => console.log("error",error))
+    },
+    getUsers({state}, payload) {
+      if(!payload) payload = {}
+      return users.get(payload)
+        .then((res) => {
+          if(payload.id) { //for single user
+            state.userInfo = res.data.rows[0]
+            const {name, id, role, access} = state.userInfo
+            localStorage.setItem('user', JSON.stringify({name, id, role, access}))
+          } else state.users = res.data.rows
+        
+        })
+        .catch((error) => console.log("error",error))
+    },
+    getThicknesses({state}) {
+      return thicknesses.get()
+        .then((res) => {
+          state.thicknessList = res.data.rows
         })
         .catch((error) => console.log("error",error))
     },

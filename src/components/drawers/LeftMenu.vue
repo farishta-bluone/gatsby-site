@@ -67,6 +67,25 @@
         </v-list-item>
       </v-list-group>
     </v-list>
+
+    <v-list class="py-0 my-0" dense>
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          link
+          :to="item.link"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}
+                
+            </v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item> 
+      </v-list>
     </v-navigation-drawer>
   </v-card>
 </template>
@@ -75,27 +94,16 @@
   export default {
     data () {
       return {
-         
-        menuItems: [{ title: 'Dashboard', icon: 'mdi-newspaper-variant-outline', link: '/dashboard' },
-            { title: 'Hot Rolled', icon: 'mdi-paper-roll', link: '/coils' },
-        ],
+        menuItems: [{ title: 'Users',icon: 'mdi-account', link: '/users' }, { title: 'Companies',icon: 'mdi-office-building', link: '/companies' }],
         settings: [
             // { title: 'Dashboard', action: 'mdi-newspaper-variant-outline', link: '/dashboard' },
         {
           action: 'mdi-paper-roll',
           items: [{ title: 'HR Stock', icon: 'mdi-paper-roll', link: '/coils' },
           { title: 'Slits Preview', icon: 'mdi-view-grid', link: '/slits-preview' },
-          { title: 'Slits Stock', icon: 'mdi-rollupjs', link: '/' }],
+          { title: 'Slits Stock', icon: 'mdi-rollupjs', link: '/slits' }],
           title: 'Hot Rolled',
-        },
-        
-        {
-          action: 'mdi-office-building',
-          link: '/companies',
-          items: [{ title: 'Lists',icon: 'mdi-view-list', link: '/companies' }],
-          title: 'Companies',
-        },
-      ],
+        }],
       }
     },
     computed: {

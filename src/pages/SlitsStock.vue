@@ -3,15 +3,29 @@
         
         <v-row justify="space-between" class="my-3"> 
             <v-col cols="auto">
-                <h2 class=" font-weight-bold">HR Coils</h2>
+                <h2 class=" font-weight-bold">HR Coil Slitted Stock</h2>
             </v-col>
-            <v-col cols="auto" class="text-right">
-                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
-            </v-col>
-            <v-col cols="12" class="pb-0">
+            
+            <v-col cols="auto" class="pb-0">
                 <v-row justify="end">
-                    <v-col cols="auto" v-if="selMultiRows.length > 0">
-                        <v-btn :dark="!preventSlitting" :disabled="preventSlitting" class="pt-4 pb-4 font-weight-bold" @click="openSlitForm">Create Slits</v-btn>
+                   <v-col
+                        class="d-flex"
+                        cols="auto"
+                    >
+                        <v-select
+                            outlined
+                            dense
+                            v-model.number="selThickness"
+                            :items="$store.state.thicknessList"
+                            label="Select Thickness"
+                            item-text="value"
+                            item-value="value"
+                            color="grey"
+                            @input="setOptions"
+                            clearable
+                            @click:clear="clearSearch('thickness')"
+                            class="select-box"
+                        ></v-select>
                     </v-col>
                     <v-col cols="auto">
                         <v-menu
@@ -43,88 +57,14 @@
                                 scrollable
                                 @input="addedFromMenu = false"
                                 @change="setOptions"
-                                :max="maxDate"
                                 >
                             </v-date-picker>
                         </v-menu>
                     </v-col>
-                    <v-col
-                        class="d-flex"
-                        cols="auto"
-                    >
-                        <v-select
-                            outlined
-                            dense
-                            v-model.number="selThickness"
-                            :items="$store.state.thicknessList"
-                            label="Select Thickness"
-                            item-text="value"
-                            item-value="value"
-                            color="grey"
-                            @input="setOptions"
-                            clearable
-                            @click:clear="clearSearch('thickness')"
-                            class="select-box"
-                        ></v-select>
+                    <v-col cols="auto" class="text-right">
+                        <v-btn dark   class="py-5 mr-1 body-2 font-weight-bold" @click="$router.push({path: '/compare-slits'})">Compare Slits</v-btn>
                     </v-col>
-                    <!-- <v-col
-                        class="d-flex"
-                        cols="auto"
-                    >
-                        <v-select
-                        outlined
-                        dense
-                        v-model.number="selShift"
-                        :items="$store.state.shifts"
-                        label="Select Slit Shift"
-                        item-text="name"
-                        item-value="id"
-                        color="grey"
-                        @input="setOptions"
-                        clearable
-                        @click:clear="clearSearch('shift')"
-                        class="select-box"
-                        ></v-select>
-                    </v-col> -->
-                    <v-col
-                        class="d-flex"
-                        cols="auto"
-                    >
-                        <v-select
-                        outlined
-                        dense
-                        v-model="selStatus"
-                        :items="statusList"
-                        label="Select Coil Status"
-                        item-text="name"
-                        item-value="name"
-                        color="grey"
-                        @input="setOptions"
-                        clearable
-                        @click:clear="clearSearch('status')"
-                        class="select-box"
-                        ></v-select>
-                    </v-col>
-
-                    <v-col
-                        class="d-flex"
-                        cols="auto"
-                    >
-                        <v-select
-                        outlined
-                        dense
-                        v-model.number="selCompany"
-                        :items="$store.state.companies"
-                        label="Select Company"
-                        item-text="name"
-                        item-value="id"
-                        color="grey"
-                        @input="setOptions"
-                        clearable
-                        @click:clear="clearSearch('company')"
-                        class="select-box"
-                        ></v-select>
-                    </v-col>
+                
                     <!-- <v-col cols="auto" class="text-right">
                 <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
             </v-col> -->
@@ -134,30 +74,27 @@
             
         </v-row>
         <v-data-table
-            v-model="selMultiRows"
+            
             :headers="headers"
-            :items="coilRows"
-            :items-per-page="10"
+            :items="$store.state.slittedCoils"
+            
             class="elevation-1 coils"
             :loading="$store.state.isLoading"
-            :footer-props="{
-            'items-per-page-options': [5, 10, 25, 50, 100]
-            }"
+            disable-pagination
             fixed-header
-            height="calc(100vh - 300px)"
-            :options.sync="options"
-            :server-items-length="$store.state.totalRows"
-            :single-select="singleSelect"
-            show-select
+            height="calc(100vh - 190px)"
+            
+            hide-default-footer
+            
         >
             <template v-slot:[`item.company`]="{item}">
                 <div class="body-2"> 
                     <span>{{showCompany(item.company)}}</span>
                 </div>
             </template>
-            <template v-slot:[`item.date`]="{item}">
+            <template v-slot:[`item.slit_date`]="{item}">
                 <div class="body-2"> 
-                    <span>{{ item.date ? $options.filters.formatDate(item.date) : '---'}}</span>
+                    <span>{{ item.date ? $options.filters.formatDate(item.slit_date) : '---'}}</span>
                 </div>
             </template>
             <template v-slot:[`item.status`]="{item}">
@@ -200,19 +137,14 @@
         </template>
             
         </v-data-table>
-        <AddCoil v-if="$store.state.coilDrawer"/>
-        <SlitCoil v-if="$store.state.slitDrawer"/>
     </v-container>
 </template>
 
 <script>
     import coils from '@/services/coils';
-    import AddCoil from '@/components/drawers/AddCoil';
-    import SlitCoil from '@/components/drawers/SlitCoil';
     export default {
         components: {
-            AddCoil,
-            SlitCoil
+            
         },
         data () {
             return {
@@ -230,35 +162,35 @@
                 addedFrom: null,
                 maxDate: new Date().toISOString(),
                 headline: '',
-                statusList: [{id:1, name: 'In-Transit' },{id:2, name: 'Available' },{id:3, name: 'In-Queue' },{id:4, name: 'Require Approval' }, {id:5, name: 'Slitted' } ],
+                statusList: [{id:1, name: 'Available' },{id:2, name: 'In-Queue' }, {id:3, name: 'Slitted' } ],
                 headers: [
                 {
-                    text: 'ID',
+                    text: 'Coil No',
                     align: 'start',
-                    value: 'id',
+                    value: 'slit_no',
+                    sortable: false,
                 },
-                { text: 'Company', value: 'company', sortable: false, },
                 { text: 'Parent Coil ID', value: 'brand_no', sortable: false, },
-                { text: 'Date of Receiving', value: 'date' },
-                { text: 'Status', value: 'status', sortable: false, },
+                
+                // { text: 'Status', value: 'status', sortable: false, },
                 // { text: 'OD (mm)', value: 'od' },
-                { text: 'Thickness (mm)', value: 'thickness' },
-                { text: 'Weight (kg)', value: 'weight' },
+                { text: 'Thickness (mm)', value: 'thickness', sortable: false, },
+                { text: 'Weight (kg)', value: 'actual_weight', sortable: false, },
+                
                 // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
-                { text: 'Width (mm)', value: 'width' },
-                { text: 'Actions', value: 'actions', sortable: false, }],
+                { text: 'Width (mm)', value: 'actual_width', sortable: false, },
+                { text: 'Slitting Date', value: 'slit_date', sortable: false, },]
+                // { text: 'Actions', value: 'actions', sortable: false, }],
        
             }
         },
         mounted() {
             let access = JSON.parse(localStorage.getItem('user')).access
-            if(access && access.hr_stock) {
-                this.$store.dispatch('getCompanies');
-                this.$store.dispatch('getShifts');
+            if(access && access.slits_stock) {
+                this.$store.dispatch('getSlittedCoils', {status: "slitted"});
                 this.$store.dispatch('getThicknesses');
             }
-            else this.$router.push({name: 'forbidden'})
-            
+            else this.$router.push({name: 'forbidden'}) 
         },
         watch: {
             options: {
@@ -276,6 +208,7 @@
         },
         computed: {
             preventSlitting() {
+                
                 let index = this.selMultiRows.findIndex(item => item.status.toLowerCase() != "available") 
                 if(index >=0) return true 
                 else return false
@@ -286,7 +219,6 @@
                 if(item.status === 'available') 
                     actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}]
                 else if (item.status === 'slitted') actions = [{icon:'mdi-view-grid', text: 'preview planning'}]
-                else if (item.status === 'in-transit') actions = [{icon:'mdi-pencil', text: 'edit'},{icon:'mdi-check-circle', text: 'change to available'}, {icon:'mdi-delete', text: 'delete'}]
                 else actions = [{icon:'mdi-view-grid', text: 'preview planning'}, {icon:'mdi-pencil', text: 'edit planning'},]
                 return item.actions = actions
                 })
@@ -299,10 +231,6 @@
                 else return ''
             },
             actions(text, item) {
-                if(text === "change to available") {
-                    let currentDate = this.$options.filters.calendarDate(new Date().toISOString())
-                    this.editCoil(item.id, {status: 'available', updated_at: currentDate, date: currentDate});
-                }
                 if(text === "delete") 
                     this.deleteCoil(item.id);
                 if(text === "edit") {
@@ -373,18 +301,17 @@
                this.setOptions() 
             },
             searchData() {
-                let payload = {}
-                const { page, itemsPerPage } = this.options
-                payload.sortBy =  this.sortBy
-                payload.orderBy =  this.orderBy
-                payload.page = page
-                payload.limit =  itemsPerPage
-                if(this.selCompany) payload.company = this.selCompany
-                if(this.selStatus) payload.status = this.selStatus.toLowerCase()
-                if(this.addedFrom) payload.date = this.addedFrom
+                let payload = { status: "slitted"}
+                // const { page, itemsPerPage } = this.options
+                // payload.sortBy =  this.sortBy
+                // payload.orderBy =  this.orderBy
+                // payload.page = page
+                // payload.limit =  itemsPerPage
+                
+                if(this.addedFrom) payload.slit_date = this.addedFrom
                 if(this.selThickness) payload.thickness = this.selThickness
-                if(this.selShift) payload.slit_shift = this.selShift
-                this.$store.dispatch('getCoils', payload);
+                // if(this.selShift) payload.slit_shift = this.selShift
+                this.$store.dispatch('getSlittedCoils', payload);
             },
             async deleteCoil(id){
                 try {
@@ -396,16 +323,14 @@
                 console.log("error",error)
                 }
             },
-            async editCoil(id, data){
+            async editCoil(item){
                 try {
-                const result = await coils.update(id, data);
+                const result = await coils.update(item.id, item);
                 this.$store.dispatch('getCoils', {page: 1});
                 // this.rows = result.data.rows;
                 console.log("result", result);
                 } catch (error) {
                 console.log("error",error)
-                } finally {
-                    this.$store.dispatch('getCoils', {page: 1});
                 }
             }
         }
