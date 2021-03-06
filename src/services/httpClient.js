@@ -10,7 +10,7 @@ const authInterceptor = (config) => {
 }
 
 const httpClient = axios.create({
-    baseURL: "https://api-uat.vanser.org/",
+    baseURL: "https://api-admin.vanser.org/",
     timeout: 500000,
     withCredentials: false,
     headers: {
