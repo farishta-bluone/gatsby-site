@@ -201,18 +201,18 @@
             
         </v-data-table>
         <AddCoil v-if="$store.state.coilDrawer"/>
-        <SlitCoil v-if="$store.state.slitDrawer"/>
+        <CoilPreview v-if="$store.state.slitDrawer"/>
     </v-container>
 </template>
 
 <script>
     import coils from '@/services/coils';
     import AddCoil from '@/components/drawers/AddCoil';
-    import SlitCoil from '@/components/drawers/SlitCoil';
+    import CoilPreview from '@/components/drawers/CoilPreview';
     export default {
         components: {
             AddCoil,
-            SlitCoil
+            CoilPreview
         },
         data () {
             return {
@@ -244,7 +244,7 @@
                 // { text: 'OD (mm)', value: 'od' },
                 { text: 'Thickness (mm)', value: 'thickness' },
                 { text: 'Weight (kg)', value: 'weight' },
-                // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
+                // { text: 'Billed Weight (kg)', value: 'formulated_weight' },
                 { text: 'Width (mm)', value: 'width' },
                 { text: 'Actions', value: 'actions', sortable: false, }],
        

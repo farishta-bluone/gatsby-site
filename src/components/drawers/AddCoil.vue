@@ -125,7 +125,7 @@
               <v-col cols="12" class="py-0">
                 <v-text-field
                   v-model.number="data.formulated_weight"
-                  label="Formulated Weight (kg)"
+                  label="Billed Weight (kg)"
                   outlined
                   dense
                   color="grey"

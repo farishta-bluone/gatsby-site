@@ -31,12 +31,12 @@ const router = new Router ({
         {
           path: "/slit-planning/:id",
           name: "edit-slit-planning",
-          component: () => import("@/pages/SlittedCoils.vue")
+          component: () => import("@/pages/SlitsPlanning.vue")
         },
         {
           path: "/slit-planning",
           name: "slit-planning",
-          component: () => import("@/pages/SlittedCoils.vue")
+          component: () => import("@/pages/SlitsPlanning.vue")
         },
         {
           path: "/slits-preview",

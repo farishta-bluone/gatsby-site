@@ -175,7 +175,7 @@
                 <v-row align="center">
                     <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12" class="pb-0"><v-btn small outlined class="caption">Edit Planning</v-btn></v-col>
                     <v-col v-if="checkRole('admin') && item.status === 'in-queue'" @click="resetCoil(item)" cols="12"><v-btn small outlined class="caption">Reset to Available</v-btn></v-col>
-                    <v-col v-if="checkRole('member') && item.status === 'in-queue'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">View & Process</v-btn></v-col>
+                    <v-col v-if="checkRole('member') && item.status === 'in-queue' && (new Date(item.slit_date).getTime() <= new Date().getTime())" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">View & Process</v-btn></v-col>
                     <v-col v-if="checkRole('admin') && item.status === 'require approval'" @click="openDrawer(item)" cols="12"><v-btn small outlined class="caption">Mark Complete</v-btn></v-col>
                 </v-row>
         </template>
@@ -235,7 +235,7 @@
                 </tbody>
             </table>
         </div>
-        <SlitCoil v-if="$store.state.slitDrawer"/>
+        <CoilPreview v-if="$store.state.slitDrawer"/>
     </v-container>
 </template>
 
@@ -243,11 +243,11 @@
 
 
 <script>
-   import SlitCoil from '@/components/drawers/SlitCoil';
+   import CoilPreview from '@/components/drawers/CoilPreview';
    import coils from '@/services/coils';
     export default {
         components: {
-            SlitCoil
+            CoilPreview
         },
         data () {
             return {

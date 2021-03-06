@@ -64,11 +64,10 @@
           <v-container>
             <div class="pb-5">
               <p class="body-1 font-weight-bold mx-3 mb-1">Slits
-              <span class="float-right">
-                <!-- <v-icon @click="editFlag = true" small>mdi-pencil</v-icon>  -->
-                <!-- <v-btn small outlined> Edit</v-btn> -->
-              </span></p>
-              <!-- <p class="caption mx-3">You can edit fields now!</p> -->
+                <span class="float-right font-weight-bold body-2 green--text text--darken-4 caption">
+                  Available width: {{avilableWidth}} mm
+                </span>
+              </p>
             </div>
             
             <v-row class="px-4" v-for="(item) in rows" :key="item.id">
@@ -80,6 +79,7 @@
                   outlined
                   dense
                   color="grey"
+                  :readonly="$route.path === '/coils'"
                 />
               </v-col>
               <v-col class="py-0" cols="4">
@@ -90,7 +90,7 @@
                   dense
                   color="grey"
                   type="number"
-                  :readonly="!editFlag('weight')"
+                  :readonly="!editFlag('weight') || $route.path === '/coils'"
                 />
               </v-col>
               <v-col  class="py-0" cols="4">
@@ -101,7 +101,7 @@
                   dense
                   color="grey"
                   type="number"
-                  :readonly="!editFlag('width')"
+                  :readonly="!editFlag('width') || $route.path === '/coils'"
                 />
               </v-col>
               <v-col class="py-0" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval') || item.status == 'slitted')">
@@ -112,7 +112,7 @@
                   dense
                   color="grey"
                   type="number"
-                  :readonly="!editFlag('actual_weight')"
+                  :readonly="!editFlag('actual_weight') || $route.path === '/coils'"
                 />
               </v-col>
               <v-col  class="py-0 pl-2" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval' || item.status == 'slitted'))">
@@ -123,7 +123,7 @@
                   dense
                   color="grey"
                   type="number"
-                  :readonly="!editFlag('actual_width')"
+                  :readonly="!editFlag('actual_width') || $route.path === '/coils'"
                 />
               </v-col>
               <v-col cols="12"><v-divider class="py-2"></v-divider></v-col>
@@ -155,7 +155,7 @@
 <script>
 import coils from '@/services/coils';
   export default {
-      name: 'SlitCoil',
+      name: 'CoilPreview',
     data () {
       return {
         drawer: null,
@@ -170,6 +170,16 @@ import coils from '@/services/coils';
       }
     },
     computed: {
+      avilableWidth() {
+        if(this.rows.length > 0) {
+          let val = 0
+          this.rows.map((item) => {
+              val = val + item.slitted_width
+          })
+          return this.rows[0].width - val
+        }
+        else return 0
+      },
       validateFields() {
         let flag = true
         for(let i=0 ; i<this.rows.length ; i++) {
