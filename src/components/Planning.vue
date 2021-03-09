@@ -22,7 +22,7 @@
                             <!-- <p>Brand: {{coilData.brand_no}}</p> -->
                             <p class="mb-2">Company: {{coilData.company}}</p>
                             <p class="mb-2">Weight: {{coilData.weight}} kg</p>
-                            <p class="mb-2">Formulated Weight: {{coilData.formulated_weight}} kg</p>
+                            <p class="mb-2">Billed Weight: {{coilData.formulated_weight}} kg</p>
                             <!-- <p class="mb-2">OD: {{coilData.od}} mm</p> -->
                             <p class="mb-2">Width: {{coilData.width}} mm</p>
                             <p class="mb-2">Thickness: {{coilData.thickness}} mm</p>
@@ -125,7 +125,6 @@
                                                 no-title
                                                 scrollable
                                                 @input="dateMenu = false"
-                                                :min="maxDate"
                                                 >
                                             </v-date-picker>
                                         </v-menu>

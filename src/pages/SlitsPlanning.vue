@@ -43,16 +43,16 @@
             </v-col> -->
         </v-row>
         <div v-for="(item, index) in $store.state.selRows" :key="index">
-            <SlittedCoil :coilData="item" />
+            <Planning :coilData="item" />
         </div>
     </v-container>
 </template>
 
 <script>
-    import SlittedCoil from '@/components/SlittedCoil';
+    import Planning from '@/components/Planning';
     export default {
         components: {
-            SlittedCoil
+            Planning
         },
         data () {
             return {

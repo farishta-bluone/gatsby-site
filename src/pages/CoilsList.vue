@@ -11,6 +11,9 @@
             <v-col cols="12" class="pb-0">
                 <v-row justify="end">
                     <v-col cols="auto" v-if="selMultiRows.length > 0">
+                        <v-btn :dark="!preventDeletion" :disabled="preventDeletion" class="pt-4 pb-4 font-weight-bold" @click="deleteMultipleCoils">Delete Coils</v-btn>
+                    </v-col>
+                    <v-col cols="auto" v-if="selMultiRows.length > 0">
                         <v-btn :dark="!preventSlitting" :disabled="preventSlitting" class="pt-4 pb-4 font-weight-bold" @click="openSlitForm">Create Slits</v-btn>
                     </v-col>
                     <v-col cols="auto">
@@ -201,18 +204,18 @@
             
         </v-data-table>
         <AddCoil v-if="$store.state.coilDrawer"/>
-        <SlitCoil v-if="$store.state.slitDrawer"/>
+        <CoilPreview v-if="$store.state.slitDrawer"/>
     </v-container>
 </template>
 
 <script>
     import coils from '@/services/coils';
     import AddCoil from '@/components/drawers/AddCoil';
-    import SlitCoil from '@/components/drawers/SlitCoil';
+    import CoilPreview from '@/components/drawers/CoilPreview';
     export default {
         components: {
             AddCoil,
-            SlitCoil
+            CoilPreview
         },
         data () {
             return {
@@ -244,7 +247,7 @@
                 // { text: 'OD (mm)', value: 'od' },
                 { text: 'Thickness (mm)', value: 'thickness' },
                 { text: 'Weight (kg)', value: 'weight' },
-                // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
+                // { text: 'Billed Weight (kg)', value: 'formulated_weight' },
                 { text: 'Width (mm)', value: 'width' },
                 { text: 'Actions', value: 'actions', sortable: false, }],
        
@@ -275,6 +278,16 @@
             },
         },
         computed: {
+            preventDeletion() {
+                let items = []
+                this.selMultiRows.map((row) => {
+                    if(row.status != 'available' && row.status != 'in-transit') {
+                        items.push(row)
+                    }
+                }) 
+                if(items.length > 0) return true
+                else return false
+            },
             preventSlitting() {
                 let index = this.selMultiRows.findIndex(item => item.status.toLowerCase() != "available") 
                 if(index >=0) return true 
@@ -284,15 +297,46 @@
                 return this.$store.state.coils.filter(item => {
                 let actions = []
                 if(item.status === 'available') 
-                    actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'}, {icon:'mdi-delete', text: 'delete'}]
+                    actions = [{icon:'mdi-plus-circle', text: 'create slit'}, {icon:'mdi-pencil', text: 'edit'},{icon:'mdi-content-duplicate', text: 'duplicate'}, {icon:'mdi-delete', text: 'delete'}]
                 else if (item.status === 'slitted') actions = [{icon:'mdi-view-grid', text: 'preview planning'}]
-                else if (item.status === 'in-transit') actions = [{icon:'mdi-pencil', text: 'edit'},{icon:'mdi-check-circle', text: 'change to available'}, {icon:'mdi-delete', text: 'delete'}]
+                else if (item.status === 'in-transit') actions = [{icon:'mdi-pencil', text: 'edit'},{icon:'mdi-check-circle', text: 'change to available'},{icon:'mdi-content-duplicate', text: 'duplicate'}, {icon:'mdi-delete', text: 'delete'}]
                 else actions = [{icon:'mdi-view-grid', text: 'preview planning'}, {icon:'mdi-pencil', text: 'edit planning'},]
                 return item.actions = actions
                 })
             }
         },
         methods: {
+            async duplicateCoil(item) {
+                let data = {
+                    brand_no: `${item.brand_no} copy`,
+                    company: item.company,
+                    created_at: this.$options.filters.calendarDate(new Date().toISOString()),
+                    date: this.$options.filters.calendarDate(item.date),
+                    formulated_weight: item.formulated_weight,
+                    shift: item.shift,
+                    status: item.status,
+                    thickness: item.thickness,
+                    width: item.width,
+                    weight: item.weight
+                }
+                try {
+                const result = await coils.add(data)
+                console.log("result", result);
+                } 
+                catch (error) {
+                console.log("error",error)
+                }
+                finally {
+                this.$store.dispatch('getCoils', {page:1, limit:10});
+                }
+            },
+            deleteMultipleCoils() {
+                let ids = []
+                this.selMultiRows.map(item => {
+                    ids.push(item.id)
+                })
+                this.deleteCoil(ids);
+            },
             showCompany(id) {
                 if(this.$store.state.companies.length > 0) 
                     return (this.$store.state.companies.find(val => val.id == id)).name
@@ -304,7 +348,7 @@
                     this.editCoil(item.id, {status: 'available', updated_at: currentDate, date: currentDate});
                 }
                 if(text === "delete") 
-                    this.deleteCoil(item.id);
+                    this.deleteCoil([item.id]);
                 if(text === "edit") {
                     this.$store.state.coilId = item.id
                     this.$store.state.coilData = item
@@ -327,6 +371,9 @@
                 if(text === "edit planning") {
                     this.$store.state.coilId = item.id
                     this.$router.push({path: `/slit-planning/${item.id}`});
+                }
+                if(text === "duplicate") {
+                    this.duplicateCoil(item)
                 }
             },
             openSlitForm() {
@@ -394,6 +441,9 @@
                 console.log("result", result);
                 } catch (error) {
                 console.log("error",error)
+                }
+                finally {
+                    this.selMultiRows = []
                 }
             },
             async editCoil(id, data){

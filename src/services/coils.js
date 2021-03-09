@@ -9,8 +9,9 @@ export default {
     add(params) {
         return httpClient.post(`${END_POINT}`,params)
     },
-    delete(id) {
-        return httpClient.delete(`${END_POINT}/${id}`)
+    delete(ids) {
+        let coilIds = ids.join()
+        return httpClient.delete(`${END_POINT}/${coilIds}`)
     },
     update(id, params) {
         // let newIds = ids.join()
