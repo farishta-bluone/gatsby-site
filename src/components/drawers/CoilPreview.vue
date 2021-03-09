@@ -129,6 +129,20 @@
               <v-col cols="12"><v-divider class="py-2"></v-divider></v-col>
               <!-- <v-col cols="12"><v-divider></v-divider></v-col> -->
             </v-row>
+            <v-row v-if="rows.length > 0" class="px-4">
+              <v-col class="pb-0" v-if="((checkRole('member') &&  rows[0].status === 'in-queue') || (checkRole('admin') &&  rows[0].status === 'require approval'))" >
+                <v-textarea
+                  v-model="notes"
+                  outlined
+                  color="grey"
+                  auto-grow
+                  dense
+                  rows="1"
+                  label="Notes"
+                  class="mr-2"
+                ></v-textarea>
+              </v-col>
+            </v-row>
             <v-row class="caption red--text px-4" v-if="errorMsg">{{errorMsg}}</v-row>
           </v-container>
     <!-- <v-divider /> -->
@@ -158,6 +172,7 @@ import coils from '@/services/coils';
       name: 'CoilPreview',
     data () {
       return {
+        notes: "",
         drawer: null,
         data: {},
         maxDate: new Date().toISOString(),
@@ -234,6 +249,7 @@ import coils from '@/services/coils';
         this.rows.map(item => {
           data.slittedItems.push({ID: item.ID, slit_no: item.slit_no, status: status, actual_weight: item.actual_weight, actual_width: item.actual_width, slitted_weight: item.slitted_weight, slitted_width: item.slitted_width})
         })
+        if(this.notes) data.notes = this.notes
         try {
           const result = await coils.updateSlits(this.$store.state.coilId, data)
           // this.savedData = result.data[0];
@@ -262,6 +278,7 @@ import coils from '@/services/coils';
             try {
                 const result = await coils.getSlits(this.$store.state.coilId)
                 this.rows = result.data.rows;
+                this.notes = this.rows[0].notes;
                 console.log("result", result);
             } 
             catch (error) {

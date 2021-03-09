@@ -125,7 +125,6 @@
                                                 no-title
                                                 scrollable
                                                 @input="dateMenu = false"
-                                                :min="maxDate"
                                                 >
                                             </v-date-picker>
                                         </v-menu>

@@ -232,7 +232,7 @@
             },
             actions(text, item) {
                 if(text === "delete") 
-                    this.deleteCoil(item.id);
+                    this.deleteCoil([item.id]);
                 if(text === "edit") {
                     this.$store.state.coilId = item.id
                     this.$store.state.coilData = item
