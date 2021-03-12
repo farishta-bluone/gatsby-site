@@ -62,9 +62,12 @@
           <v-divider />
           
           <v-container>
-            <div class="pb-5">
+            <div class="pb-5" v-if="rows.length > 0">
               <p class="body-1 font-weight-bold mx-3 mb-1">Slits
-                <span class="float-right font-weight-bold body-2 green--text text--darken-4 caption">
+                <span v-if="rows[0].status === 'require approval' || rows[0].status === 'slitted'" class="float-right font-weight-bold body-2 red--text text--darken-4 caption">
+                  Scrap: {{scrapWidth}} mm
+                </span>
+                <span v-else class="float-right font-weight-bold body-2 green--text text--darken-4 caption">
                   Available width: {{avilableWidth}} mm
                 </span>
               </p>
@@ -147,7 +150,7 @@
           </v-container>
     <!-- <v-divider /> -->
     
-    <div class="mx-4 mt-8 float-right" v-if="$route.path.includes('preview')">
+    <div class="ma-4 mt-5 float-right" v-if="$route.path.includes('preview')">
       <v-btn
         class="mr-2"
         outlined
@@ -185,13 +188,25 @@ import coils from '@/services/coils';
       }
     },
     computed: {
+      scrapWidth() {
+        if(this.rows.length > 0) {
+          let val = 0
+          this.rows.map((item) => {
+              if(!item.actual_width) item.actual_width = 0
+              val = parseFloat(val) + parseFloat(item.actual_width)
+          })
+          return (this.rows[0].width - val).toFixed(3)
+        }
+        else return 0
+      },
       avilableWidth() {
         if(this.rows.length > 0) {
           let val = 0
           this.rows.map((item) => {
-              val = val + item.slitted_width
+              if(!item.slitted_width) item.slitted_width = 0
+              val = parseFloat(val) + parseFloat(item.slitted_width)
           })
-          return this.rows[0].width - val
+          return (this.rows[0].width - val).toFixed(3)
         }
         else return 0
       },
@@ -207,13 +222,13 @@ import coils from '@/services/coils';
       },
       validateForm() {
         let totalWidth = 0;
-        let totalWeight = 0;
+        // let totalWeight = 0;
         if(this.rows.length > 0) {
           this.rows.map(item => {
           totalWidth = parseFloat(totalWidth) + parseFloat(item.slitted_width)
-          totalWeight = parseFloat(totalWeight) + parseFloat(item.slitted_weight)
+          // totalWeight = parseFloat(totalWeight) + parseFloat(item.slitted_weight)
         })
-        if(this.rows[0].width >= totalWidth && this.rows[0].weight >= totalWeight) return true;
+        if(this.rows[0].width >= totalWidth) return true;
         else return false;
         }
         else return true

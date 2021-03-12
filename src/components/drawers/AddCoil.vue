@@ -284,6 +284,8 @@ import thicknesses from '@/services/thicknesses';
             this.data.date = `${this.selDate}`
             this.data.created_at = this.$options.filters.calendarDate(new Date().toISOString())
             try {
+              this.$store.state.coilDrawer = false
+              this.$store.state.isLoading = true
               const result = await coils.add(this.data)
               console.log("result", result);
             } 
@@ -291,7 +293,7 @@ import thicknesses from '@/services/thicknesses';
               console.log("error",error)
             }
             finally {
-              this.$store.state.coilDrawer = false
+              this.$store.state.isLoading = false
               this.$store.dispatch('getCoils', {page:1, limit:10});
             }
           }  
@@ -302,6 +304,8 @@ import thicknesses from '@/services/thicknesses';
           this.data.updated_at = this.$options.filters.calendarDate(new Date().toISOString())
           console.log("data", this.data)
           try {
+            this.$store.state.coilDrawer = false
+            this.$store.state.isLoading = true
             const result = await coils.update(this.$store.state.coilId, this.data)
             // this.rows = result.data.rows;
             console.log("result", result);
@@ -310,7 +314,7 @@ import thicknesses from '@/services/thicknesses';
             console.log("error",error)
           }
           finally {
-            this.$store.state.coilDrawer = false
+            this.$store.state.isLoading = false
             this.$store.dispatch('getCoils', {page:1, limit:10});
           }
         },
