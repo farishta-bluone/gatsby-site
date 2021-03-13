@@ -107,7 +107,7 @@
                   :readonly="!editFlag('width') || $route.path === '/coils'"
                 />
               </v-col>
-              <v-col class="py-0" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval') || item.status == 'slitted')">
+              <v-col class="py-0" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue' && $route.path === '/slits-preview') || (checkRole('admin') && item.status === 'require approval') || item.status == 'slitted')">
                 <v-text-field
                   v-model="item.actual_weight"
                   label="Actual Weight (kg)"
@@ -118,7 +118,7 @@
                   :readonly="!editFlag('actual_weight') || $route.path === '/coils'"
                 />
               </v-col>
-              <v-col  class="py-0 pl-2" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue') || (checkRole('admin') && item.status === 'require approval' || item.status == 'slitted'))">
+              <v-col  class="py-0 pl-2" cols="6" v-if="((checkRole('member') &&  item.status === 'in-queue' && $route.path === '/slits-preview') || (checkRole('admin') && item.status === 'require approval' || item.status == 'slitted'))">
                 <v-text-field
                   v-model="item.actual_width"
                   label="Actual Width (mm)"
@@ -133,7 +133,7 @@
               <!-- <v-col cols="12"><v-divider></v-divider></v-col> -->
             </v-row>
             <v-row v-if="rows.length > 0" class="px-4">
-              <v-col class="pb-0" v-if="((checkRole('member') &&  rows[0].status === 'in-queue') || (checkRole('admin') &&  rows[0].status === 'require approval'))" >
+              <v-col class="pb-0" v-if="((checkRole('member') &&  rows[0].status === 'in-queue' && $route.path === '/slits-preview') || (checkRole('admin') &&  rows[0].status === 'require approval'))" >
                 <v-textarea
                   v-model="notes"
                   outlined

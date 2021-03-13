@@ -103,7 +103,15 @@
           { title: 'Slits Preview', icon: 'mdi-view-grid', link: '/slits-preview' },
           { title: 'Slits Stock', icon: 'mdi-rollupjs', link: '/slits' }],
           title: 'Hot Rolled',
-        }],
+        },
+        // {
+        //   action: 'mdi-spray-bottle',
+        //   items: [{ title: 'Coil Stock', icon: 'mdi-paper-roll', link: '/coils' },
+        //   { title: 'Coil Preview', icon: 'mdi-view-grid', link: '/slits-preview' },
+        //   { title: 'Pickled Stock', icon: 'mdi-rollupjs', link: '/slits' }],
+        //   title: 'Picking',
+        // },
+        ],
       }
     },
     computed: {

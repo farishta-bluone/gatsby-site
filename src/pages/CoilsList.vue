@@ -6,7 +6,8 @@
                 <h2 class=" font-weight-bold">HR Coils</h2>
             </v-col>
             <v-col cols="auto" class="text-right">
-                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
+                <v-btn dark class="mr-4 body-2 font-weight-bold" @click="slittedCoilForm">Add Slitted Coil</v-btn>
+                <v-btn dark class="mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
             </v-col>
             <v-col cols="12" class="pb-0">
                 <v-row justify="end">
@@ -205,6 +206,7 @@
         </v-data-table>
         <AddCoil v-if="$store.state.coilDrawer"/>
         <CoilPreview v-if="$store.state.slitDrawer"/>
+        <AddSlittedCoil v-if="$store.state.slittedDrawer"/>
     </v-container>
 </template>
 
@@ -212,10 +214,12 @@
     import coils from '@/services/coils';
     import AddCoil from '@/components/drawers/AddCoil';
     import CoilPreview from '@/components/drawers/CoilPreview';
+    import AddSlittedCoil from '@/components/drawers/AddSlittedCoil';
     export default {
         components: {
             AddCoil,
-            CoilPreview
+            CoilPreview,
+            AddSlittedCoil
         },
         data () {
             return {
@@ -406,9 +410,12 @@
           return color
         },
         openForm() {
-            console.log(this.$store.state)
             this.$store.state.coilId = null
             this.$store.state.coilDrawer = true
+        },
+        slittedCoilForm() {
+            this.$store.state.coilId = null
+            this.$store.state.slittedDrawer = true
         },
           
             clearSearch(type) {

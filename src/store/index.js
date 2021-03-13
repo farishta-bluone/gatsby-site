@@ -30,10 +30,10 @@ export default new Vuex.Store({
     coilData: {},
     totalRows: 0,
     coils: [],
-    isLoading: false, 
-    btnColor: '#9932CC', 
+    isLoading: false,  
     coilDrawer: false,
     slitDrawer: false,
+    slittedDrawer: false,
     companies: [],
   },
   mutations: {

@@ -164,7 +164,7 @@
             </v-row>
           </v-container>
     <v-divider />
-    <div class="mx-4 mt-8 float-right">
+    <div class="ma-4 mt-8 float-right">
       <v-btn
         class="mr-2"
         outlined
