@@ -219,9 +219,9 @@
         },
         methods: {
             createPlanning(item) {
-                this.$store.state.picklingDialog = true
                 item.dateMenu = false
-                this.$store.state.selSlits = [...item];
+                this.$store.state.selSlits = [item];
+                this.$store.state.picklingDialog = true  
             },
             openDialog(){
                 this.$store.state.selRows.map(item => {

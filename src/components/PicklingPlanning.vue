@@ -15,7 +15,7 @@
 
             <v-card-text>
               <v-container>
-                <v-row v-for="item in $store.state.selSlits" :key="item.id">
+                <v-row v-for="(item, index) in $store.state.selSlits" :key="index">
                   <v-col
                     cols="4"
                     class="py-0"
