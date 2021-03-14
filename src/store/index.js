@@ -13,6 +13,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    selSlits: [],
+    slitId: null,
     userInfo: {name: "", role: ""},
     users: [],
     slitCards: [{id:1, thickness: null, slittedCoils: []}],
@@ -35,6 +37,8 @@ export default new Vuex.Store({
     slitDrawer: false,
     slittedDrawer: false,
     companies: [],
+    picklingDialog: false,
+    picklingDrawer: false
   },
   mutations: {
     SET_USER_INFO: (state, newValue) => {

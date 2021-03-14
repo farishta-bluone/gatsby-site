@@ -64,6 +64,21 @@ const router = new Router ({
           component: () => import("@/pages/Users.vue")
         },
         {
+          path: "/pickling-stock",
+          name: "pickling-stock",
+          component: () => import("@/pages/pickling/PicklingStock.vue")
+        },
+        {
+          path: "/pickling-process",
+          name: "pickling-process",
+          component: () => import("@/pages/pickling/Process.vue")
+        },
+        {
+          path: "/pickled",
+          name: "pickled",
+          component: () => import("@/pages/pickling/PickledStock.vue")
+        },
+        {
           path: "/403",
           name: "forbidden",
           component: () => import("@/pages/Forbidden.vue")

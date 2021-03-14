@@ -12,9 +12,12 @@ export default {
     delete(id) {
         return httpClient.delete(`${END_POINT}/${id}`)
     },
-    update(id, params) {
+    update(params) {
         // let newIds = ids.join()
-        return httpClient.put(`${END_POINT}/${id}`, params)
-    }
+        return httpClient.put(`${END_POINT}`, params)
+    },
+    getOne(id) {
+        return httpClient.get(`${END_POINT}/${id}`)
+    },
     
 }
