@@ -233,7 +233,7 @@
                 // state.slittedDate = date[0];
                 item.pickling_date = date[0]
                 item.dateMenu = false
-                this.$store.state.selRows = [item];
+                this.$store.state.selSlits = [item];
                 this.$store.state.picklingDialog = true
                 
                 
