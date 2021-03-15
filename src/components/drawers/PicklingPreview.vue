@@ -20,6 +20,11 @@
     <v-divider class="py-3"/>
           <v-container>
             <v-row class="px-4">
+                <v-col v-if="coil.status" cols="12" class="py-0 text-right">
+                  <p v-if="checkRole('admin') && coil.status === 'approve for pickling'" class=" font-weight-bold red--text text--darken-4 caption">
+                    Pickling Loss: {{ (((coil.actual_weight - coil.pickled_weight) / coil.actual_weight) * 100).toFixed(2) }} %
+                  </p>
+                </v-col>
                 <v-col cols="6" class="py-0">
                 <v-text-field
                   :value="coil.slit_no"
@@ -109,6 +114,25 @@
                   
                 />
               </v-col>
+              <v-col cols="6" class="py-0">
+                <v-text-field
+                  v-model="coil.pickling_od"
+                  label="OD (mm)"
+                  outlined
+                  dense
+                  color="grey"
+                  type="number"
+                />
+              </v-col>
+              <v-col cols="6" class="py-0">
+                <v-text-field
+                  v-model="coil.pickling_operator"
+                  label="Operator Name"
+                  outlined
+                  dense
+                  color="grey"
+                />
+              </v-col>
               
               <v-col class="py-0" cols="12">
                 <v-textarea
@@ -172,7 +196,7 @@ import slittedCoils from '@/services/slittedCoils';
     computed: {
         validateFields() {
        
-        if(this.coil.pickled_thickness && this.coil.pickled_width && this.coil.pickled_weight) {
+        if(this.coil.pickled_thickness && this.coil.pickled_width && this.coil.pickled_weight && this.coil.pickling_operator && this.coil.pickling_od) {
            return true
         } else return false
        
@@ -225,7 +249,17 @@ import slittedCoils from '@/services/slittedCoils';
                 let calendarDate = this.$options.filters.calendarDate(new Date().toISOString())
                 let status = "approve for pickling"
                 if(this.checkRole('admin')) status = "pickled"
-                data.push({pickled_thickness: this.coil.pickled_thickness, pickled_weight: this.coil.pickled_weight, pickled_width: this.coil.pickled_width, pickling_notes: this.coil.pickling_notes ? this.coil.pickling_notes : '', status: status, id: this.coil.ID, updated_at: calendarDate })
+                data.push({
+                  pickled_thickness: this.coil.pickled_thickness, 
+                  pickled_weight: this.coil.pickled_weight, 
+                  pickled_width: this.coil.pickled_width, 
+                  pickling_notes: this.coil.pickling_notes ? this.coil.pickling_notes : '', 
+                  status: status, 
+                  id: this.coil.ID, 
+                  updated_at: calendarDate,
+                  pickling_od: this.coil.pickling_od,
+                  pickling_operator: this.coil.pickling_operator 
+                })
                 try {
                     const result = await slittedCoils.update(data)
                     // this.savedData = result.data[0];

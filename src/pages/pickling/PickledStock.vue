@@ -86,6 +86,11 @@
                     <span>{{ item.pickling_date ? $options.filters.formatDate(item.pickling_date) : '---'}}</span>
                 </div>
             </template>
+            <template v-slot:[`item.loss`]="{item}">
+                <div class="body-2"> 
+                    <span class="red--text text--darken-4">{{ (((item.actual_weight - item.pickled_weight) / item.actual_weight) * 100).toFixed(2) }} %</span>
+                </div>
+            </template>
         </v-data-table>
     </v-container>
 </template>
@@ -124,14 +129,15 @@
                 { text: 'Parent Coil ID', value: 'brand_no', sortable: false, },
                 
                 // { text: 'Status', value: 'status', sortable: false, },
-                // { text: 'OD (mm)', value: 'od' },
-                { text: 'Pickled Thickness (mm)', value: 'pickled_thickness', sortable: false, },
-                { text: 'Pickled Weight (kg)', value: 'pickled_weight', sortable: false, },
+                { text: 'OD (mm)', value: 'pickling_od' },
+                { text: 'Operator', value: 'pickling_operator' },
+                { text: 'Thickness (mm)', value: 'pickled_thickness', sortable: false, },
+                { text: 'Weight (kg)', value: 'pickled_weight', sortable: false, },
                 
                 // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
-                { text: 'Pickled Width (mm)', value: 'pickled_width', sortable: false, },
-                { text: 'Pickling Date', value: 'pickling_date', sortable: false, },]
-                // { text: 'Actions', value: 'actions', sortable: false, }],
+                { text: 'Width (mm)', value: 'pickled_width', sortable: false, },
+                { text: 'Pickling Date', value: 'pickling_date', sortable: false, },
+                { text: 'Picking Loss', value: 'loss', sortable: false, }],
                 
        
             }

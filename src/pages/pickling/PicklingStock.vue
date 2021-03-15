@@ -63,7 +63,7 @@
                         </v-menu>
                     </v-col>
                     <v-col cols="auto" v-if="$store.state.selRows.length > 0">
-                        <v-btn dark   class="py-5 mr-1 body-2 font-weight-bold" @click="openDialog">Create Planning</v-btn>
+                        <v-btn dark class="py-5 mr-1 body-2 font-weight-bold" @click="openDialog">Create Pickling Planning</v-btn>
                     </v-col>
                 
                     <!-- <v-col cols="auto" class="text-right">
@@ -107,7 +107,7 @@
                 </div>
             </template>
             <template v-slot:[`item.actions`]="{item}">
-                <v-btn @click="createPlanning(item)" small outlined>Create Planning</v-btn>
+                <v-btn @click="createPlanning(item)" small outlined>Create Pickling Planning</v-btn>
         </template>
             
         </v-data-table>

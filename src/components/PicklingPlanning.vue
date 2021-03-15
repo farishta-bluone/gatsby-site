@@ -124,7 +124,7 @@
         },
         computed: {
             formTitle () {
-                return this.editedIndex <= 0 ? 'Create Planning' : 'Edit Planning'
+                return this.editedIndex <= 0 ? 'Create Pickling Planning' : 'Edit Pickling Planning'
             },
             haltSave(){
                 let flag = false;

@@ -95,7 +95,7 @@
             </template>
             <template v-slot:[`item.actions`]="{item}">
                 <v-row align="center">
-                    <v-col v-if="item.status === 'in-process for pickling'" @click="editPlanning(item)" cols="12" :class="checkRole('member')? 'pb-0' : ''"><v-btn small outlined class="caption">Edit Planning</v-btn></v-col>
+                    <v-col v-if="item.status === 'in-process for pickling'" @click="editPlanning(item)" cols="12" :class="checkRole('member')? 'pb-0' : ''"><v-btn small outlined class="caption">Edit Pickling Planning</v-btn></v-col>
                     <v-col v-if="checkRole('member') && item.status === 'in-process for pickling'" @click="processCoil(item)" cols="12"><v-btn small outlined class="caption">View & Process</v-btn></v-col>
                     <v-col v-if="checkRole('admin') && item.status === 'approve for pickling'" @click="processCoil(item)" cols="12"><v-btn small outlined class="caption">Mark Complete</v-btn></v-col>
                     <!-- <v-col v-if="item.status === 'approve for pickling'" @click="resetCoil(item)" cols="12"><v-btn small outlined class="caption">Mark Complete</v-btn></v-col> -->
@@ -148,20 +148,21 @@
                     align: 'start',
                     value: 'slit_no',
                     sortable: false,
+                    width:"10%"
                 },
                 // { text: 'Parent Coil ID', value: 'brand_no', sortable: false, },
                 
                 
                 // { text: 'OD (mm)', value: 'od' },
-                { text: 'Thickness (mm)', value: 'thickness', sortable: false, },
-                { text: 'Weight (kg)', value: 'actual_weight', sortable: false, },
+                { text: 'Thickness (mm)', value: 'thickness', sortable: false, width:"15%"},
+                { text: 'Weight (kg)', value: 'actual_weight', sortable: false, width:"10%" },
                 
                 
-                { text: 'Width (mm)', value: 'actual_width', sortable: false, },
-                { text: 'Pickling Date', value: 'pickling_date', sortable: false, },
-                { text: 'Pickling Shift', value: 'pickling_shift' },
-                { text: 'Status', value: 'status', sortable: false, },
-                { text: 'Actions', value: 'actions', sortable: false,align: 'end', }],
+                { text: 'Width (mm)', value: 'actual_width', sortable: false, width:"10%" },
+                { text: 'Pickling Date', value: 'pickling_date', sortable: false,width:"15%" },
+                { text: 'Pickling Shift', value: 'pickling_shift', width:"15%" },
+                { text: 'Status', value: 'status', sortable: false, width:"10%"},
+                { text: 'Actions', value: 'actions', sortable: false,align: 'end', width:"15%" }],
        
             }
         },
