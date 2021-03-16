@@ -7,7 +7,7 @@ export default {
         return httpClient.get(`${END_POINT}`)
     },
     add(params) {
-        return httpClient.post(`${END_POINT}`,params)
+        return httpClient.post(`${END_POINT}`, params)
     },
     delete(id) {
         return httpClient.delete(`${END_POINT}/${id}`)

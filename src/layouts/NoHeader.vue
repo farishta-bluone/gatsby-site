@@ -1,13 +1,9 @@
 <script>
-
-export default {
-    
-    
-}
+export default {};
 </script>
 
 <template>
-    <div>
-        <slot />
-    </div>
+  <div>
+    <slot />
+  </div>
 </template>

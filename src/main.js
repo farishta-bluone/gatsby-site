@@ -27,8 +27,8 @@ const options = {
 
 Vue.use(VueHtmlToPaper, options);
 
-Vue.component('default-layout',Default);
-Vue.component('no-header-layout',NoHeader);
+Vue.component('default-layout', Default);
+Vue.component('no-header-layout', NoHeader);
 
 Vue.config.productionTip = false
 
