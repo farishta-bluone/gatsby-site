@@ -6,7 +6,7 @@ const getAuthToken = () => localStorage.getItem('access_token');
 const authInterceptor = (config) => {
     if (getAuthToken())
         config.headers.common['Authorization'] = 'Bearer ' + getAuthToken();
-    return config;  
+    return config;
 }
 
 const httpClient = axios.create({
@@ -27,34 +27,34 @@ const errorInterceptor = error => {
         // $toast.type = 'error'    
         // $toast.message= 'Network/Server error'
         return Promise.reject(error);
-        }
-    
-        // all the other error responses
-        switch(error.response.status) {
+    }
 
-            case 400:
+    // all the other error responses
+    switch (error.response.status) {
+
+        case 400:
             //   console.log("error",error.response.data.message)
-                break;
-    
-            case 401: // authentication error, logout the user
-            localStorage.removeItem('access_token');
-            $router.push({path: '/login'})
             break;
-    
-            default:
-            //console.error(error.response.status, error.message);
-        }
-        return Promise.reject(error);
+
+        case 401: // authentication error, logout the user
+            localStorage.removeItem('access_token');
+            $router.push({ path: '/login' })
+            break;
+
+        default:
+        //console.error(error.response.status, error.message);
+    }
+    return Promise.reject(error);
 };
 
 const responseInterceptor = response => {
-    switch(response.status) {
-        case 200: 
-            
+    switch (response.status) {
+        case 200:
+
             break;
         // any other cases
         default:
-            // default case
+        // default case
     }
 
     return response;

@@ -4,10 +4,10 @@ const END_POINT = '/coils';
 
 export default {
     get(payload) {
-        return httpClient.get(`${END_POINT}`, {params: payload})
+        return httpClient.get(`${END_POINT}`, { params: payload })
     },
     add(params) {
-        return httpClient.post(`${END_POINT}`,params)
+        return httpClient.post(`${END_POINT}`, params)
     },
     delete(ids) {
         let coilIds = ids.join()
@@ -21,14 +21,14 @@ export default {
         return httpClient.get(`${END_POINT}/${id}/slits`)
     },
     addSlits(id, params) {
-        return httpClient.post(`${END_POINT}/${id}/slits`,params)
+        return httpClient.post(`${END_POINT}/${id}/slits`, params)
     },
     updateSlits(id, params) {
         return httpClient.put(`${END_POINT}/${id}/slits`, params)
     },
     deleteSlits(id, payload) {
         console.log(payload)
-        return httpClient.delete(`${END_POINT}/${id}/slits`, {params: payload})
+        return httpClient.delete(`${END_POINT}/${id}/slits`, { params: payload })
     },
     // prevNext(ids,data) {
     //     let newIds = ids.join()
@@ -41,5 +41,5 @@ export default {
     //     let newIds = ids.join()
     //     return httpClient.put(`${END_POINT}/image-from-gallery/${newIds}`)
     // },
-    
+
 }

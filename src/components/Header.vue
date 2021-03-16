@@ -1,32 +1,23 @@
 <template>
   <div>
-    <v-app-bar
-      color="#455A64"
-      dark
-      fixed
-      style="z-index: 11"
-    >
-      <v-app-bar-nav-icon  @click="showMenu()"></v-app-bar-nav-icon>
-    <!-- <v-avatar
-        color="white"
-        class="mx-5"
-        size="45"
-        >
-        <img  src="../assets/images/VM_logo.png">
-    </v-avatar> -->
-    
-      <v-toolbar-title class="title font-weight-bold">Vanser Metallics</v-toolbar-title>
+    <v-app-bar color="#455A64" dark fixed style="z-index: 11">
+      <v-app-bar-nav-icon @click="showMenu()"></v-app-bar-nav-icon>
+      <v-toolbar-title class="title font-weight-bold"
+        >Vanser Metallics</v-toolbar-title
+      >
 
       <v-spacer></v-spacer>
 
-      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.name}}</span>
-      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{$store.state.userInfo.role}}</span>
-    
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{
+        $store.state.userInfo.name
+      }}</span>
+      <span class="subtitle-1 font-weight-bold mx-3 text-capitalize">{{
+        $store.state.userInfo.role
+      }}</span>
+
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn>
-
-      
 
       <!-- <v-btn icon>
         <v-icon>mdi-magnify</v-icon>
@@ -41,26 +32,23 @@
 </template>
 
 <script>
-
-  export default {
-    name: 'Header',
-    data () {
-      return { 
-
-      }
+export default {
+  name: "Header",
+  data() {
+    return {};
+  },
+  methods: {
+    showMenu() {
+      this.$store.state.menu = true;
+      this.$store.state.miniMenu = !this.$store.state.miniMenu;
     },
-    methods: {
-      showMenu() {
-      this.$store.state.menu = true
-      this.$store.state.miniMenu = !this.$store.state.miniMenu
-    },
-    logout () {
+    logout() {
       // this.$store.state.logout = true
-      this.$store.state.miniMenu = true
-      localStorage.removeItem('user');
-      localStorage.removeItem('access_token');
-      this.$router.push({path: '/login'})
+      this.$store.state.miniMenu = true;
+      localStorage.removeItem("user");
+      localStorage.removeItem("access_token");
+      this.$router.push({ path: "/login" });
     },
-    }
-  }
+  },
+};
 </script>
