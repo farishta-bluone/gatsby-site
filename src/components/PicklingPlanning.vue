@@ -114,9 +114,7 @@
         data () {
             return {
                 selDate: null,
-                dateMenu: false,
-                editedIndex: -1,
-               
+                dateMenu: false
             }
         },
         mounted() {
@@ -124,7 +122,8 @@
         },
         computed: {
             formTitle () {
-                return this.editedIndex <= 0 ? 'Create Pickling Planning' : 'Edit Pickling Planning'
+                if(this.$route.path === '/pickling-stock') return 'Create Pickling Planning'
+                else return 'Edit Pickling Planning'
             },
             haltSave(){
                 let flag = false;
