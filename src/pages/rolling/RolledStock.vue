@@ -2,8 +2,7 @@
   <v-container fluid>
     <v-row justify="space-between" class="my-3">
       <v-col cols="auto">
-        <h2 class="pb-0 font-weight-bold">Slitted Coils Stock</h2>
-        <p class="caption grey--text text--darken-2">Ready for pickling</p>
+        <h2 class="font-weight-bold">Rolled Stock</h2>
       </v-col>
 
       <v-col cols="auto" class="pb-0">
@@ -58,24 +57,12 @@
               </v-date-picker>
             </v-menu>
           </v-col>
-          <v-col cols="auto" v-if="$store.state.selRows.length > 0">
-            <v-btn
-              dark
-              class="py-5 mr-1 body-2 font-weight-bold"
-              @click="openDialog"
-              >Create Pickling Planning</v-btn
-            >
-          </v-col>
         </v-row>
       </v-col>
     </v-row>
     <v-data-table
-      v-model="$store.state.selRows"
       :headers="headers"
       :items="$store.state.slittedCoils"
-      :single-select="singleSelect"
-      item-key="ID"
-      show-select
       class="elevation-1 coils"
       :loading="$store.state.isLoading"
       disable-pagination
@@ -83,59 +70,53 @@
       height="calc(100vh - 190px)"
       hide-default-footer
     >
-      <template v-slot:[`item.company`]="{ item }">
-        <div class="body-2">
-          <span>{{ showCompany(item.company) }}</span>
-        </div>
-      </template>
-      <template v-slot:[`item.slit_date`]="{ item }">
+      <template v-slot:[`item.rolling_date`]="{ item }">
         <div class="body-2">
           <span>{{
-            item.date ? $options.filters.formatDate(item.slit_date) : "---"
+            item.rolling_date
+              ? $options.filters.formatDate(item.rolling_date)
+              : "---"
           }}</span>
         </div>
       </template>
-      <template v-slot:[`item.status`]="{ item }">
+      <!-- <template v-slot:[`item.loss`]="{ item }">
         <div class="body-2">
-          <span :class="getTextColor(item.status)" class="text-capitalize">{{
-            item.status
-          }}</span>
+          <span class="red--text text--darken-4"
+            >{{
+              (
+                ((item.actual_weight - item.pickled_weight) /
+                  item.actual_weight) *
+                100
+              ).toFixed(2)
+            }}
+            %</span
+          >
         </div>
-      </template>
-      <template v-slot:[`item.actions`]="{ item }">
-        <v-btn @click="createPlanning(item)" small outlined
-          >Create Pickling Planning</v-btn
-        >
-      </template>
+      </template> -->
     </v-data-table>
-    <v-row>
-      <PicklingPlanning v-if="$store.state.picklingDialog" />
-    </v-row>
   </v-container>
 </template>
 
 <script>
-import PicklingPlanning from "@/components/PicklingPlanning";
 export default {
-  components: {
-    PicklingPlanning,
-  },
+  components: {},
   data() {
     return {
-      selDate: null,
-      dateMenu: false,
-      data: [],
-      dialog: false,
+      selected: [],
       selShift: "",
       selThickness: "",
-      selRows: [],
-      singleSelect: false,
       options: {},
       sortBy: "",
       orderBy: "desc",
-      selStatus: null,
       addedFromMenu: false,
       addedFrom: null,
+      maxDate: new Date().toISOString(),
+      headline: "",
+      statusList: [
+        { id: 1, name: "Available" },
+        { id: 2, name: "In-Queue" },
+        { id: 3, name: "Slitted" },
+      ],
       headers: [
         {
           text: "Coil No",
@@ -144,23 +125,19 @@ export default {
           sortable: false,
         },
         { text: "Parent Coil ID", value: "brand_no", sortable: false },
-        { text: "Thickness (mm)", value: "thickness", sortable: false },
-        { text: "Weight (kg)", value: "actual_weight", sortable: false },
-        { text: "Width (mm)", value: "actual_width", sortable: false },
-        { text: "Slitting Date", value: "slit_date", sortable: false },
-        { text: "Actions", value: "actions", sortable: false, align: "end" },
+        { text: "OD (mm)", value: "pickling_od" },
+        { text: "Thickness (mm)", value: "rolling_thickness", sortable: false },
+        { text: "Weight (kg)", value: "rolled_weight", sortable: false },
+        { text: "Width (mm)", value: "pickled_width", sortable: false },
+        { text: "Rolling Date", value: "rolling_date", sortable: false },
+        { text: "Operator", value: "rolling_operator", sortable: false},
+        // { text: " Loss", value: "loss", sortable: false },
       ],
     };
   },
   mounted() {
-    this.$store.state.selRows = [];
-    this.$store.state.selSlits = [];
-    this.$store.dispatch("getShifts");
-    let access = JSON.parse(localStorage.getItem("user")).access;
-    if (access && access.slits_stock) {
-      this.$store.dispatch("getSlittedCoils", { status: "slitted" });
-      this.$store.dispatch("getThicknesses");
-    } else this.$router.push({ name: "forbidden" });
+    this.$store.dispatch("getSlittedCoils", { status: "rolled" });
+    this.$store.dispatch("getThicknesses");
   },
   watch: {
     options: {
@@ -179,50 +156,19 @@ export default {
   computed: {
   },
   methods: {
-    createPlanning(item) {
-      item.dateMenu = false;
-      this.$store.state.selSlits = [item];
-      this.$store.state.picklingDialog = true;
-    },
-    openDialog() {
-      this.$store.state.selRows.map((item) => {
-        item.dateMenu = false;
-      });
-      this.$store.state.picklingDialog = true;
-      this.$store.state.selSlits = [...this.$store.state.selRows];
-    },
     setOptions() {
       this.searchData();
     },
-    getTextColor(type) {
-      let color = "";
-      switch (type) {
-        case "slitted":
-          color = "grey--text text--darken-1";
-          break;
-        case "available":
-          color = "green--text text--darken-2";
-          break;
-        case "edit-required":
-          color = "red--text text--lighten-1";
-          break;
-        default:
-          color = "yellow--text text--darken-4";
-          break;
-      }
-      return color;
-    },
     clearSearch(type) {
       if (type === "date") this.addedFrom = null;
-      else if (type === "status") this.selStatus = null;
       else if (type === "thickness") this.selThickness = null;
       else if (type === "shift") this.selShift = null;
       this.setOptions();
     },
     searchData() {
-      let payload = { status: "slitted" };
-      if (this.addedFrom) payload.slit_date = this.addedFrom;
-      if (this.selThickness) payload.thickness = this.selThickness;
+      let payload = { status: "rolled" };
+      if (this.addedFrom) payload.rolling_date = this.addedFrom;
+      if (this.selThickness) payload.rolling_thickness = this.selThickness;
       // if(this.selShift) payload.slit_shift = this.selShift
       this.$store.dispatch("getSlittedCoils", payload);
     }

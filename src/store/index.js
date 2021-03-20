@@ -9,6 +9,8 @@ import slittedCoils from '@/services/slittedCoils';
 import thicknesses from '@/services/thicknesses';
 import users from '@/services/users';
 
+import rolling from './modules/rolling';
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -128,5 +130,6 @@ export default new Vuex.Store({
     }
   },
   modules: {
+    rolling
   }
 })

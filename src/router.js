@@ -79,6 +79,21 @@ const router = new Router({
       component: () => import("@/pages/pickling/PickledStock.vue")
     },
     {
+      path: "/rolling-stock",
+      name: "rolling-stock",
+      component: () => import("@/pages/rolling/RollingStock.vue")
+    },
+    {
+      path: "/rolling-process",
+      name: "rolling-process",
+      component: () => import("@/pages/rolling/Process.vue")
+    },
+    {
+      path: "/rolled",
+      name: "rolled",
+      component: () => import("@/pages/rolling/RolledStock.vue")
+    },
+    {
       path: "/403",
       name: "forbidden",
       component: () => import("@/pages/Forbidden.vue")

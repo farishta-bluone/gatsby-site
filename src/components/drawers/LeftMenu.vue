@@ -124,6 +124,23 @@ export default {
           ],
           title: "Pickling",
         },
+        {
+          action: "mdi-script-text-outline",
+          items: [
+            {
+              title: "Coil Stock",
+              icon: "mdi-paper-roll",
+              link: "/rolling-stock",
+            },
+            {
+              title: "Rolling Process",
+              icon: "mdi-view-grid",
+              link: "/rolling-process",
+            },
+            { title: "Rolled Stock", icon: "mdi-rollupjs", link: "/rolled" },
+          ],
+          title: "Rolling",
+        },
       ],
     };
   },
