@@ -162,7 +162,7 @@ export default {
     this.$store.dispatch("getShifts");
     let access = JSON.parse(localStorage.getItem("user")).access;
     if (access && access.slits_stock) {
-      this.$store.dispatch("getSlittedCoils", { status: "slitted" });
+      this.$store.dispatch("getSlittedCoils", { status: "slitted", page: 1, limit: 10 });
       this.$store.dispatch("getThicknesses");
     } else this.$router.push({ name: "forbidden" });
   },

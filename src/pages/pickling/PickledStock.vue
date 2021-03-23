@@ -59,13 +59,6 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col
-        class="red--text caption py-0"
-        color="red"
-        cols="12"
-        v-if="preventSlitting"
-        >You can create slits for available coils only.</v-col
-      >
     </v-row>
     <v-data-table
       :headers="headers"
@@ -142,7 +135,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("getSlittedCoils", { status: "pickled" });
+    this.$store.dispatch("getSlittedCoils", { status: "pickled", page: 1, limit: 10 });
     this.$store.dispatch("getThicknesses");
   },
   watch: {

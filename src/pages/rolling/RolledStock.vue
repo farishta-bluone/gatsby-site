@@ -140,7 +140,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("getSlittedCoils", { status: "rolled" });
+    this.$store.dispatch("getSlittedCoils", { status: "rolled", page: 1, limit: 10 });
     this.$store.dispatch("getThicknesses");
   },
   watch: {
