@@ -73,15 +73,19 @@
       v-model="$store.state.selRows"
       :headers="headers"
       :items="$store.state.slittedCoils"
+      :items-per-page="10"
       :single-select="singleSelect"
       item-key="ID"
       show-select
       class="elevation-1 coils"
       :loading="$store.state.isLoading"
-      disable-pagination
       fixed-header
-      height="calc(100vh - 190px)"
-      hide-default-footer
+      height="calc(100vh - 265px)"
+      :footer-props="{
+        'items-per-page-options': [5, 10, 25, 50, 100],
+      }"
+      :options.sync="options"
+      :server-items-length="$store.state.totalRows"
     >
       <template v-slot:[`item.company`]="{ item }">
         <div class="body-2">
@@ -192,7 +196,9 @@ export default {
       this.$store.state.selSlits = [...this.$store.state.selRows];
     },
     setOptions() {
-      this.searchData();
+      if (this.options.page === 1) {
+        this.searchData();
+      } else this.options.page = 1;
     },
     getTextColor(type) {
       let color = "";
@@ -221,6 +227,10 @@ export default {
     },
     searchData() {
       let payload = { status: "slitted" };
+      const { page, itemsPerPage } = this.options;
+        payload.page = page;
+        payload.limit = itemsPerPage;
+
       if (this.addedFrom) payload.slit_date = this.addedFrom;
       if (this.selThickness) payload.thickness = this.selThickness;
       // if(this.selShift) payload.slit_shift = this.selShift

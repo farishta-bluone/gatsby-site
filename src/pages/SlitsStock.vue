@@ -82,12 +82,16 @@
     <v-data-table
       :headers="headers"
       :items="$store.state.slittedCoils"
+      :items-per-page="10"
       class="elevation-1 coils"
       :loading="$store.state.isLoading"
-      disable-pagination
       fixed-header
-      height="calc(100vh - 190px)"
-      hide-default-footer
+      height="calc(100vh - 245px)"
+      :footer-props="{
+        'items-per-page-options': [5, 10, 25, 50, 100],
+      }"
+      :options.sync="options"
+      :server-items-length="$store.state.totalRows"
     >
       <template v-slot:[`item.company`]="{ item }">
         <div class="body-2">
@@ -273,7 +277,6 @@ export default {
       this.$router.push({ path: "/slit-planning" });
     },
     setOptions() {
-      console.log("Calleddddddd");
       if (this.options.page === 1) {
         this.searchData();
       } else this.options.page = 1;
@@ -311,11 +314,15 @@ export default {
       this.setOptions();
     },
     searchData() {
-      let payload = { status: "slitted" };
-      if (this.addedFrom) payload.slit_date = this.addedFrom;
-      if (this.selThickness) payload.thickness = this.selThickness;
-      // if(this.selShift) payload.slit_shift = this.selShift
-      this.$store.dispatch("getSlittedCoils", payload);
+        let payload = { status: "slitted" };
+        const { page, itemsPerPage } = this.options;
+        payload.page = page;
+        payload.limit = itemsPerPage;
+
+        if (this.addedFrom) payload.slit_date = this.addedFrom;
+        if (this.selThickness) payload.thickness = this.selThickness;
+        // if(this.selShift) payload.slit_shift = this.selShift
+        this.$store.dispatch("getSlittedCoils", payload);
     },
     async deleteCoil(id) {
       try {

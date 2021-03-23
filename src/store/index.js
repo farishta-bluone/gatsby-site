@@ -54,7 +54,7 @@ export default new Vuex.Store({
       return slittedCoils.get(payload)
         .then((res) => {
           state.slittedCoils = res.data.rows;
-          // state.totalRows = res.data.count;
+          state.totalRows = res.data.count;
         })
         .catch((error) => console.log("error", error))
         .finally(() => state.isLoading = false)

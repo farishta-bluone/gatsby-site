@@ -70,12 +70,16 @@
     <v-data-table
       :headers="headers"
       :items="$store.state.slittedCoils"
+      :items-per-page="10"
       class="elevation-1 coils"
       :loading="$store.state.isLoading"
-      disable-pagination
       fixed-header
-      height="calc(100vh - 190px)"
-      hide-default-footer
+      height="calc(100vh - 245px)"
+      :footer-props="{
+        'items-per-page-options': [5, 10, 25, 50, 100],
+      }"
+      :options.sync="options"
+      :server-items-length="$store.state.totalRows"
     >
       <template v-slot:[`item.pickling_date`]="{ item }">
         <div class="body-2">
@@ -159,7 +163,9 @@ export default {
   },
   methods: {
     setOptions() {
-      this.searchData();
+      if (this.options.page === 1) {
+        this.searchData();
+      } else this.options.page = 1;
     },
     clearSearch(type) {
       if (type === "date") this.addedFrom = null;
@@ -168,10 +174,14 @@ export default {
       this.setOptions();
     },
     searchData() {
-      let payload = { status: "pickled" };
-      if (this.addedFrom) payload.pickling_date = this.addedFrom;
-      if (this.selThickness) payload.pickled_thickness = this.selThickness;
-      this.$store.dispatch("getSlittedCoils", payload);
+        let payload = { status: "pickled" };
+        const { page, itemsPerPage } = this.options;
+        payload.page = page;
+        payload.limit = itemsPerPage;
+
+        if (this.addedFrom) payload.pickling_date = this.addedFrom;
+        if (this.selThickness) payload.pickled_thickness = this.selThickness;
+        this.$store.dispatch("getSlittedCoils", payload);
     }
   },
 };
