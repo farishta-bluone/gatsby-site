@@ -89,6 +89,21 @@ const router = new Router({
       component: () => import("@/pages/rolling/Process.vue")
     },
     {
+      path: "/annealed",
+      name: "annealed",
+      component: () => import("@/pages/annealing/AnnealedStock.vue")
+    },
+    {
+      path: "/annealing-stock",
+      name: "annealing-stock",
+      component: () => import("@/pages/annealing/AnnealingStock.vue")
+    },
+    {
+      path: "/annealing-process",
+      name: "annealing-process",
+      component: () => import("@/pages/annealing/Process.vue")
+    },
+    {
       path: "/rolled",
       name: "rolled",
       component: () => import("@/pages/rolling/RolledStock.vue")

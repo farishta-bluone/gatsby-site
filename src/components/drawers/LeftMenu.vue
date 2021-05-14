@@ -5,7 +5,7 @@
       permanent
       :mini-variant.sync="$store.state.miniMenu"
       dark
-      width="240"
+      width="260"
       style="position: fixed; top: 60px; right: 0; z-index: 10"
     >
       <!-- <v-list class="" dense>
@@ -140,6 +140,23 @@ export default {
             { title: "Rolled Stock", icon: "mdi-rollupjs", link: "/rolled" },
           ],
           title: "Rolling",
+        },
+        {
+          action: "mdi-radiator",
+          items: [
+            {
+              title: "Coil Stock",
+              icon: "mdi-paper-roll",
+              link: "/annealing-stock",
+            },
+            {
+              title: "Annealing Process",
+              icon: "mdi-radiator-disabled",
+              link: "/annealing-process",
+            },
+            { title: "Annealed Stock", icon: "mdi-radiator-off", link: "/annealed" },
+          ],
+          title: "Annealing",
         },
       ],
     };

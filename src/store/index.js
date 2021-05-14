@@ -10,6 +10,9 @@ import thicknesses from '@/services/thicknesses';
 import users from '@/services/users';
 
 import rolling from './modules/rolling';
+import annealing from './modules/annealing';
+import bases from './modules/bases';
+import furnaces from './modules/furnaces';
 
 Vue.use(Vuex)
 
@@ -127,9 +130,21 @@ export default new Vuex.Store({
         })
         .catch((error) => console.log("error", error))
         .finally(() => state.isLoading = false)
-    }
+    },
+    getAnnealedCoils({ state }, payload) {
+      if (!payload) payload = {}
+      return slittedCoils.getAnnealedCoils(payload)
+      .then((res) => {
+          state.slittedCoils = res.data.rows
+          state.totalRows = res.data.count;
+      })
+      .catch((error) => console.log("error", error))
+  },
   },
   modules: {
-    rolling
+    rolling,
+    annealing,
+    bases,
+    furnaces
   }
 })

@@ -6,6 +6,9 @@ export default {
     get(payload) {
         return httpClient.get(`${END_POINT}`, { params: payload })
     },
+    getAnnealedCoils(payload) {
+        return httpClient.get(`${END_POINT}/annealed`, { params: payload })
+    },
     add(params) {
         return httpClient.post(`${END_POINT}`, params)
     },
