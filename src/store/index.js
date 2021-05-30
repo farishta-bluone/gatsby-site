@@ -43,7 +43,8 @@ export default new Vuex.Store({
     slittedDrawer: false,
     companies: [],
     picklingDialog: false,
-    picklingDrawer: false
+    picklingDrawer: false,
+    addReport: false
   },
   mutations: {
     SET_USER_INFO: (state, newValue) => {

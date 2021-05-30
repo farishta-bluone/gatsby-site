@@ -2,18 +2,9 @@
   <v-container fluid>
     <v-row justify="space-between" class="my-3">
       <v-col cols="auto">
-        <h2 class="font-weight-bold">HR Coils</h2>
+        <h2 class="font-weight-bold">Create Report for Available Coils</h2>
       </v-col>
       <v-col cols="auto" class="text-right">
-        <!-- <v-btn
-          dark
-          class="mr-4 body-2 font-weight-bold"
-          @click="slittedCoilForm"
-          >Add Slitted Coil</v-btn
-        > -->
-        <v-btn dark class="mr-1 body-2 font-weight-bold" @click="openForm"
-          >Add Coil</v-btn
-        >
       </v-col>
       <v-col cols="12" class="pb-0">
         <v-row justify="end">
@@ -26,15 +17,6 @@
               >Delete Coils</v-btn
             >
           </v-col>
-          <!-- <v-col cols="auto" v-if="selMultiRows.length > 0">
-            <v-btn
-              :dark="!preventSlitting"
-              :disabled="preventSlitting"
-              class="pt-4 pb-4 font-weight-bold"
-              @click="openSlitForm"
-              >Create Slits</v-btn
-            >
-          </v-col> -->
           <v-col cols="auto">
             <v-menu
               ref="menu"
@@ -121,26 +103,6 @@
               class="select-box"
             ></v-select>
           </v-col>
-
-          <v-col class="d-flex" cols="auto">
-            <v-select
-              outlined
-              dense
-              v-model.number="selCompany"
-              :items="$store.state.companies"
-              label="Select Company"
-              item-text="name"
-              item-value="id"
-              color="grey"
-              @input="setOptions"
-              clearable
-              @click:clear="clearSearch('company')"
-              class="select-box"
-            ></v-select>
-          </v-col>
-          <!-- <v-col cols="auto" class="text-right">
-                <v-btn dark   class=" mr-1 body-2 font-weight-bold" @click="openForm">Add Coil</v-btn>
-            </v-col> -->
         </v-row>
       </v-col>
       <v-col
@@ -154,7 +116,7 @@
     <v-data-table
       v-model="selMultiRows"
       :headers="headers"
-      :items="coilRows"
+      :items="$store.state.coils"
       :items-per-page="10"
       class="elevation-1 coils"
       :loading="$store.state.isLoading"
@@ -165,8 +127,6 @@
       height="calc(100vh - 300px)"
       :options.sync="options"
       :server-items-length="$store.state.totalRows"
-      :single-select="singleSelect"
-      show-select
     >
       <template v-slot:[`item.company`]="{ item }">
         <div class="body-2">
@@ -188,46 +148,47 @@
         </div>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
-        <v-menu>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-
-          <v-list dense>
-            <v-list-item
-              v-for="val in item.actions"
-              :key="val.text"
-              @click="actions(val.text, item)"
-            >
-              <v-list-item-icon class="mr-0">
-                <v-icon class="mt-1" small v-text="val.icon" />
-              </v-list-item-icon>
-              <v-list-item-title class="body-2 text-capitalize mt-1">
-                {{ val.text }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-row align="center">
+        <v-col
+            v-if="checkRole('member') && item.status === 'available'"
+            @click="openDrawer(item,'report')"
+            cols="12"
+            ><v-btn small outlined class="caption">Add Report</v-btn></v-col
+          >
+          <v-col
+            v-if="checkRole('member') && item.status === 'require approval'"
+            @click="openDrawer(item, 'preview')"
+            cols="12"
+            ><v-btn small outlined class="caption">Edit Report</v-btn></v-col
+          >
+          <v-col
+            v-if="checkRole('admin') && item.status === 'require approval'"
+            @click="openDrawer(item, 'preview')"
+            cols="12"
+            ><v-btn small outlined class="caption">Mark Complete</v-btn></v-col
+          >
+        <!-- <v-col
+            v-if="item.status === 'slitted'"
+            @click="openDrawer(item, 'preview')"
+            cols="12"
+            ><v-btn small outlined class="caption">Preview Report</v-btn></v-col
+          > -->
+        </v-row>
       </template>
     </v-data-table>
-    <AddCoil v-if="$store.state.coilDrawer" />
     <CoilPreview v-if="$store.state.slitDrawer" />
-    <AddSlittedCoil v-if="$store.state.slittedDrawer" />
+    <AddReport v-if="$store.state.addReport" />
   </v-container>
 </template>
 
 <script>
 import coils from "@/services/coils";
-import AddCoil from "@/components/drawers/AddCoil";
 import CoilPreview from "@/components/drawers/CoilPreview";
-import AddSlittedCoil from "@/components/drawers/AddSlittedCoil";
+import AddReport from "@/components/drawers/AddReport";
 export default {
   components: {
-    AddCoil,
     CoilPreview,
-    AddSlittedCoil,
+    AddReport
   },
   data() {
     return {
@@ -239,7 +200,7 @@ export default {
       sortBy: "",
       orderBy: "desc",
       selCompany: null,
-      selStatus: null,
+      selStatus: "available,require approval",
       addedFromMenu: false,
       addedFrom: null,
       maxDate: new Date().toISOString(),
@@ -252,14 +213,13 @@ export default {
         { id: 5, name: "Slitted" },
       ],
       headers: [
-        // {
-        //   text: "ID",
-        //   align: "start",
-        //   value: "id",
-        // },
-        { text: "Parent Coil ID", value: "brand_no", sortable: false, align: "start" },
-        { text: "Company", value: "company", sortable: false },
-        
+        {
+          text: "ID",
+          align: "start",
+          value: "id",
+        },
+        // { text: "Company", value: "company", sortable: false },
+        { text: "Parent Coil ID", value: "brand_no", sortable: false },
         { text: "Date of Receiving", value: "date" },
         { text: "Status", value: "status", sortable: false },
         // { text: 'OD (mm)', value: 'od' },
@@ -310,36 +270,19 @@ export default {
       );
       if (index >= 0) return true;
       else return false;
-    },
-    coilRows() {
-      return this.$store.state.coils.filter((item) => {
-        let actions = [];
-        if (item.status === "available")
-          actions = [
-            // { icon: "mdi-plus-circle", text: "create slit" },
-            { icon: "mdi-pencil", text: "edit" },
-            { icon: "mdi-content-duplicate", text: "duplicate" },
-            { icon: "mdi-delete", text: "delete" },
-          ];
-        else if (item.status === "slitted")
-          actions = [{ icon: "mdi-view-grid", text: "preview planning" }];
-        else if (item.status === "in-transit")
-          actions = [
-            { icon: "mdi-pencil", text: "edit" },
-            { icon: "mdi-check-circle", text: "change to available" },
-            { icon: "mdi-content-duplicate", text: "duplicate" },
-            { icon: "mdi-delete", text: "delete" },
-          ];
-        else
-          actions = [
-            { icon: "mdi-view-grid", text: "preview planning" },
-            // { icon: "mdi-pencil", text: "edit planning" },
-          ];
-        return (item.actions = actions);
-      });
-    },
+    }
   },
   methods: {
+      openDrawer(item, type) {
+          this.$store.state.coilId = item.id;
+          if(type === 'preview') this.$store.state.slitDrawer = true
+          else this.$store.state.addReport = true  
+      },
+    checkRole(role_name) {
+      let user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.role == role_name) return true;
+      else return false;
+    },
     async duplicateCoil(item) {
       let data = {
         brand_no: `${item.brand_no} copy`,
@@ -420,7 +363,6 @@ export default {
       this.$router.push({ path: "/slit-planning" });
     },
     setOptions() {
-      console.log("Calleddddddd");
       if (this.options.page === 1) {
         this.searchData();
       } else this.options.page = 1;
@@ -468,7 +410,7 @@ export default {
       payload.page = page;
       payload.limit = itemsPerPage;
       if (this.selCompany) payload.company = this.selCompany;
-      if (this.selStatus) payload.status = this.selStatus.toLowerCase();
+      if (this.selStatus) payload.status = this.selStatus;
       if (this.addedFrom) payload.date = this.addedFrom;
       if (this.selThickness) payload.thickness = this.selThickness;
       if (this.selShift) payload.slit_shift = this.selShift;

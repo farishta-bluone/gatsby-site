@@ -99,9 +99,9 @@ export default {
           items: [
             { title: "HR Stock", icon: "mdi-paper-roll", link: "/coils" },
             {
-              title: "Slits Preview",
+              title: "Slits Report",
               icon: "mdi-view-grid",
-              link: "/slits-preview",
+              link: "/slits-report",
             },
             { title: "Slits Stock", icon: "mdi-rollupjs", link: "/slits" },
           ],

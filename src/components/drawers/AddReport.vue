@@ -1,18 +1,16 @@
 <template>
   <v-navigation-drawer
-    v-if="$store.state.slitDrawer"
-    v-model="$store.state.slitDrawer"
+    v-if="$store.state.addReport"
+    v-model="$store.state.addReport"
     temporary
     right
     width="420"
     style="position: fixed; top: 0; right: 0; overflow-y: scroll; z-index: 101"
   >
     <div class="body-1 font-weight-bold px-4 py-2">
-      HR Slitting Report Preview
-      <!-- <span>{{ $store.state.news.$store.state.coilDrawerStatus === 'edit' ? 'Edit News' : 'Add News'}}</span> -->
+      HR Slitting Report
       <v-icon class="float-right" @click="close"> mdi-close-circle </v-icon>
     </div>
-    <!-- <p></p> -->
     <v-divider />
     <v-container v-if="rows.length > 0">
       <v-row class="px-4">
@@ -54,38 +52,76 @@
             readonly
           />
         </v-col>
+        <v-col class="d-flex" cols="6">
+            <v-select
+              outlined
+              dense
+              v-model.number="slitShift"
+              :items="$store.state.shifts"
+              label="Select Shift"
+              item-text="name"
+              item-value="id"
+              color="grey"
+              clearable
+              class="select-box"
+            ></v-select>
+          </v-col>
+          <v-col cols="6">
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  dense
+                  outlined
+                  color="grey"
+                  v-model="slitDate"
+                  placeholder="Select Date"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  clearable
+                  class="body-2"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="slitDate"
+                no-title
+                scrollable
+                @input="menu = false"
+              >
+              </v-date-picker>
+            </v-menu>
+          </v-col>
       </v-row>
     </v-container>
     <v-divider />
 
     <v-container>
-      <div class="pb-5" v-if="rows.length > 0">
+      <div v-if="rows.length > 0">
         <p class="body-1 font-weight-bold mx-3 mb-1">
           Slits
           <span
-            v-if="
-              rows[0].status === 'require approval' ||
-              rows[0].status === 'slitted'
-            "
-            class="float-right font-weight-bold body-2 red--text text--darken-4 caption"
+            class="float-right"
           >
-            Scrap: {{ scrapWidth }} mm
-          </span>
-          <span
-            v-else
-            class="float-right font-weight-bold body-2 green--text text--darken-4 caption"
-          >
-            Available width: {{ avilableWidth }} mm
+          <v-btn dark small @click="addSlits">Add Slit</v-btn>
           </span>
         </p>
       </div>
 
-      <v-row class="px-4" v-for="item in rows" :key="item.id">
-        <!-- <v-col cols="3" class="pr-0">No.{{item.slit_no}}</v-col> -->
+      <p class="text-right pb-4 px-4 mt-2 font-weight-bold body-2 red--text text--darken-4 caption">
+          <!-- Available width: {{ avilableWidth }} mm -->
+          Scrap: {{ scrapWidth }} mm
+      </p>
+      <v-row class="px-4" v-for="item in slits" :key="item.id">
         <v-col
-          cols="6"
+          cols="5"
           class="py-0"
-          v-if="$route.path.includes('preview') || item.slit_no"
         >
           <v-text-field
             v-model="item.slit_no"
@@ -96,7 +132,7 @@
             :readonly="$route.path === '/coils'"
           />
         </v-col>
-        <v-col class="py-0" cols="6">
+        <v-col class="py-0" cols="5">
           <v-text-field
             v-model="item.slitted_width"
             label="Width (mm)"
@@ -107,21 +143,26 @@
             :readonly="$route.path === '/coils'"
           />
         </v-col>
-        <v-col class="py-0" cols="6">
+        <v-col cols="2">
+          <v-icon class="float-right" @click="deleteSlit(item.id)" small>
+            mdi-close-thick
+          </v-icon>
+        </v-col>
+        <v-col class="py-0" cols="5">
           <v-text-field
-            v-model="item.slitted_weight"
+            :value="calcSlitWt(item.slitted_width)"
             label="Weight (kg)"
             outlined
             dense
             color="grey"
             type="number"
-            :readonly="$route.path === '/coils'"
+            readonly
           />
           <!-- :readonly="!editFlag('weight') || $route.path === '/coils'" -->
         </v-col>
         <v-col
           class="py-0"
-          cols="6"
+          cols="5"
         >
           <v-text-field
             v-model="item.actual_weight"
@@ -150,9 +191,13 @@
         <v-col cols="12"><v-divider class="py-2"></v-divider></v-col>
         <!-- <v-col cols="12"><v-divider></v-divider></v-col> -->
       </v-row>
-      <v-row v-if="rows.length > 0" class="px-4">
+      <!-- <v-row>
+          <v-col cols="12"><v-divider class="py-2"></v-divider></v-col>
+      </v-row> -->
+      <v-row class="px-4">
         <v-col
           class="pb-0"
+          cols="12"
         >
           <v-textarea
             v-model="notes"
@@ -191,6 +236,9 @@ export default {
   name: "CoilPreview",
   data() {
     return {
+      slitShift: null,
+      slitDate: null,
+      menu: false,
       notes: "",
       drawer: null,
       data: {},
@@ -201,33 +249,40 @@ export default {
       times: [],
       rows: [],
       errorMsg: "",
+      count: 1,
+      slits: [{
+        id: 1,
+        slit_no: "",
+        actual_weight: "",
+        slitted_width: "",
+        slitted_weight: ""}]
     };
   },
   computed: {
     scrapWidth() {
-      if (this.rows.length > 0) {
+      if (this.slits.length > 0) {
         let val = 0;
-        this.rows.map((item) => {
-          if (!item.actual_width) item.actual_width = 0;
-          val = parseFloat(val) + parseFloat(item.actual_width);
-        });
-        return (this.rows[0].width - val).toFixed(3);
-      } else return 0;
-    },
-    avilableWidth() {
-      if (this.rows.length > 0) {
-        let val = 0;
-        this.rows.map((item) => {
+        this.slits.map((item) => {
           if (!item.slitted_width) item.slitted_width = 0;
           val = parseFloat(val) + parseFloat(item.slitted_width);
         });
-        return (this.rows[0].width - val).toFixed(3);
+        return (this.rows.length > 0 ? (this.rows[0].width - val).toFixed(3) : 0 );
+      } else return 0;
+    },
+    avilableWidth() {
+      if (this.slits.length > 0) {
+        let val = 0;
+        this.slits.map((item) => {
+          if (!item.slitted_width) item.slitted_width = 0;
+          val = parseFloat(val) + parseFloat(item.slitted_width);
+        });
+        return (this.rows.length > 0 ? (this.rows[0].width - val).toFixed(3) : 0 );
       } else return 0;
     },
     validateFields() {
       let flag = true;
-      for (let i = 0; i < this.rows.length; i++) {
-        if (!this.rows[i].slitted_width || !this.rows[i].slitted_weight) {
+      for (let i = 0; i < this.slits.length; i++) {
+        if (!this.slits[i].slitted_width || !this.slits[i].slit_no || !this.slits[i].actual_weight) {
           flag = false;
           break;
         }
@@ -237,8 +292,8 @@ export default {
     validateForm() {
       let totalWidth = 0;
       // let totalWeight = 0;
-      if (this.rows.length > 0) {
-        this.rows.map((item) => {
+      if (this.slits.length > 0) {
+        this.slits.map((item) => {
           totalWidth = parseFloat(totalWidth) + parseFloat(item.slitted_width);
           // totalWeight = parseFloat(totalWeight) + parseFloat(item.slitted_weight)
         });
@@ -251,6 +306,25 @@ export default {
     this.getSlits();
   },
   methods: {
+    calcSlitWt(slit_width) {
+        if(this.rows.length > 0)
+            return ((this.rows[0].weight/this.rows[0].width) * slit_width).toFixed(2)
+        else return 0;    
+    },
+    deleteSlit(id) {
+      let index = this.slits.findIndex((item) => item.id == id);
+      this.slits.splice(index, 1);
+    },
+    addSlits() {
+      ++this.count;
+      this.slits.push({
+        id: this.count,
+        slit_no: "",
+        actual_weight: "",
+        slitted_width: "",
+        slitted_weight: "",
+      });
+    },
     editFlag() {
       // if (this.checkRole("admin")) return true;
       // if (this.checkRole("member") && (type == "weight" || type == "width"))
@@ -268,27 +342,30 @@ export default {
           "Total of slits weight & width can't exceed parent coil's weight & width.";
         return;
       } else this.errorMsg = "";
-      let status = this.rows[0].status;
-      if (this.checkRole("member") && status == "require approval")
-        status = "require approval";
-      if (this.checkRole("admin") && status == "require approval")
-        status = "slitted";
+      let status = "require approval"
+
+    let currentDate = this.$options.filters.calendarDate(new Date().toISOString())
       let data = {
         slittedItems: [],
         status: status,
+        slit_date: this.slitDate,
+        slit_shift: this.slitShift,
         updated_at: this.$options.filters.calendarDate(
           new Date().toISOString()
         ),
       };
-      this.rows.map((item) => {
+      this.slits.map((item) => {
         data.slittedItems.push({
           ID: item.ID,
           slit_no: item.slit_no,
           status: status,
           actual_weight: item.actual_weight,
           actual_width: item.slitted_width,
-          slitted_weight: item.slitted_weight,
+          slitted_weight: this.calcSlitWt(item.slitted_width),
           slitted_width: item.slitted_width,
+          created_at: currentDate,
+          updated_at: currentDate,
+          parent_id: this.$store.state.coilId
         });
       });
       if (this.notes) data.notes = this.notes;
@@ -299,24 +376,21 @@ export default {
       } catch (error) {
         console.log("error", error);
       } finally {
-        let payload = {}
-        if(this.$route.path.includes('report')) { //for report page
-          payload.status = "available,require approval",
-          this.$store.dispatch("getCoils", payload);
-        } else { //coils page
-          payload.status = "available,require approval,slitted",
-          this.$store.dispatch("getCoils", payload);
-        }
-        this.$store.state.slitDrawer = false;
         // let payload = { status: "in-queue,require approval" }; //it can change
         // if (this.$store.state.previewShift)
         //   payload.slit_shift = this.$store.state.previewShift;
         // if (this.$store.state.previewDate)
         //   payload.slit_date = this.$store.state.previewDate;
-        // this.$store.state.slitDrawer = false;
+        this.$store.state.addReport = false;
+        this.$store.state.coilId = null
+        this.$store.dispatch("getCoils", {status: "available,require approval"});
         // this.$store.dispatch("getSlittedCoils", payload);
       }
     },
+    clearSearch(data) {
+      console.log("data", data);
+    },
+    searchData() {},
     async getSlits() {
       // this.data.date = `${this.selDate} ${this.time}`
       // this.data.created_at = this.$options.filters.calendarDate(new Date().toISOString())
@@ -324,16 +398,15 @@ export default {
         const result = await coils.getSlits(this.$store.state.coilId);
         this.rows = result.data.rows;
         this.notes = this.rows[0].notes;
-        console.log("result", result);
       } catch (error) {
         console.log("error", error);
       } finally {
-        // this.$store.state.slitDrawer = false
+        // this.$store.state.addReport = false
         // this.$store.dispatch('getCoils', {page:1, limit:10});
       }
     },
     close() {
-      this.$store.state.slitDrawer = false;
+      this.$store.state.addReport = false;
     },
   },
 };

@@ -61,19 +61,6 @@
             </v-date-picker>
           </v-menu>
         </v-col>
-        <!-- <v-col class="py-0 my-0" cols="12">
-                  <v-select
-                        outlined
-                        dense
-                        v-model="data.shift"
-                        :items="$store.state.shifts"
-                        label="Select Shift"
-                        item-text="name"
-                        item-value="id"
-                        color="grey"
-                        
-                        ></v-select>
-                </v-col> -->
         <v-col cols="12" class="py-0">
           <v-text-field
             v-model="data.brand_no"
@@ -128,19 +115,47 @@
           />
         </v-col>
         <v-col cols="12" class="py-0 my-0">
-          <v-radio-group class="py-0 my-0" v-model="coilStatus" row dense>
-            <span class="mr-3 grey--text text--darken-2">Status</span>
+          <v-row>
+            <v-col cols="auto">
+              <span class="mr-3 grey--text text--darken-2">Status</span>
+            </v-col>
+            <v-col>
+               <v-radio-group class="py-0 my-0 body-1" v-model="coilStatus" dense>
+            
             <v-radio
               label="In-Transit"
               value="in-transit"
               color="grey darken-3"
+              class="body-1"
             ></v-radio>
             <v-radio
               label="Available"
               value="available"
               color="grey darken-3"
+              class="body-2"
+            ></v-radio>
+            <v-radio
+              label="Slitted"
+              value="slitted"
+              color="grey darken-3"
+              class="body-2"
             ></v-radio>
           </v-radio-group>
+            </v-col>
+            <v-col class="py-0 my-0" cols="12" v-if="coilStatus === 'slitted'">
+          <v-select
+            outlined
+            dense
+            v-model="data.shift"
+            :items="$store.state.shifts"
+            label="Select Shift"
+            item-text="name"
+            item-value="id"
+            color="grey"
+            ></v-select>
+        </v-col>
+          </v-row>
+         
         </v-col>
         <!-- <v-col cols="12" class="py-0">
                 <v-text-field

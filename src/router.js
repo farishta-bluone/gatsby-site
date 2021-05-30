@@ -44,6 +44,11 @@ const router = new Router({
       component: () => import("@/pages/SlitsPreview.vue")
     },
     {
+      path: "/slits-report",
+      name: "slits_report",
+      component: () => import("@/pages/SlitsReport.vue")
+    },
+    {
       path: "/companies",
       name: "companies",
       component: () => import("@/pages/Companies.vue")

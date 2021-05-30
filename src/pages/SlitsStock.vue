@@ -105,6 +105,13 @@
           }}</span>
         </div>
       </template>
+      <template v-slot:[`item.slit_shift`]="{ item }">
+        <div class="caption">
+          {{
+            item.slit_shift ? getShiftName(item.slit_shift) : "24 Hour Shift"
+          }}
+        </div>
+      </template>
       <template v-slot:[`item.status`]="{ item }">
         <div class="body-2">
           <span :class="getTextColor(item.status)" class="text-capitalize">{{
@@ -186,6 +193,7 @@ export default {
 
         // { text: 'Formulated wt (kg)', value: 'formulated_weight' },
         { text: "Width (mm)", value: "actual_width", sortable: false },
+        { text: 'Shift', value: 'slit_shift', sortable: false },
         { text: "Slitting Date", value: "slit_date", sortable: false },
       ],
       // { text: 'Actions', value: 'actions', sortable: false, }],
@@ -241,6 +249,11 @@ export default {
     },
   },
   methods: {
+    getShiftName(shift) {
+      if (shift === 1) return "Day Shift";
+      else if (shift === 2) return "Night Shift";
+      else return "24 Hour Shift";
+    },
     showCompany(id) {
       if (this.$store.state.companies.length > 0)
         return this.$store.state.companies.find((val) => val.id == id).name;
